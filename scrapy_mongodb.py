@@ -128,7 +128,7 @@ class MongoDBPipeline():
                 },
                 dict(item),
                 upsert=True)
-        log.msg('Item wrote to MongoDB database %s/%s' % (
+        log.msg('Stored item in MongoDB %s/%s' % (
             settings['MONGODB_DATABASE'],
             settings['MONGODB_COLLECTION']),
                     level=log.DEBUG, spider=spider)
