@@ -67,7 +67,7 @@ class MongoDBPipeline():
         else:
             mongodb_fsync = settings['MONGODB_FSYNC']
 
-        if not_set(settings['MONGODB_REPLICA_SET']):
+        if not not_set(settings['MONGODB_REPLICA_SET']):
             #
             # Connecting to a MongoDB replica set
             #
@@ -80,6 +80,7 @@ class MongoDBPipeline():
 
             connection = MongoReplicaSetClient(
                 '%s:%i' % (mongodb_host, mongodb_port),
+                replicaSet=settings['MONGODB_REPLICA_SET'],
                 w=mongodb_rs_w,
                 fsync=mongodb_fsync,
                 read_preference=ReadPreference.PRIMARY_PREFERRED)
