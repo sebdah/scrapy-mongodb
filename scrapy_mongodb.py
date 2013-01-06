@@ -79,9 +79,7 @@ class MongoDBPipeline():
                 mongodb_rs_w = settings['MONGODB_REPLICA_SET_W']
 
             connection = MongoReplicaSetClient(
-                '%s:%i' % (
-                    settings['MONGODB_HOST'],
-                    settings['MONGODB_PORT']),
+                '%s:%i' % (mongodb_host, mongodb_port),
                 w=mongodb_rs_w,
                 fsync=mongodb_fsync,
                 read_preference=ReadPreference.PRIMARY_PREFERRED)
