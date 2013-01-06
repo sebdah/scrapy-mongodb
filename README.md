@@ -66,6 +66,10 @@ Write operations will block until they have been replicated to the specified num
 
 Release information
 -------------------
+**0.2.0 (2013-01-06)**
+- Fixed connection problem for MongoDB replica sets
+- Fixed bad default parameter handling
+
 **0.1.0 (2013-01-06)**
 - Initial release of the `scrapy-mongodb` pipeline module
 - Support for MongoDB replica sets and standalone databases
