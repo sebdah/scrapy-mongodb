@@ -69,3 +69,9 @@ Release information
 **0.1.0 (2013-01-06)**
 - Initial release of the `scrapy-mongodb` pipeline module
 - Support for MongoDB replica sets and standalone databases
+
+Instructions to release project to PyPi
+---------------------------------------
+
+    python setup.py register
+    python setup.py sdist upload
