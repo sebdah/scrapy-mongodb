@@ -1,3 +1,5 @@
+<a href='https://travis-ci.org/sebdah/scrapy-mongodb'><img src='https://secure.travis-ci.org/sebdah/scrapy-mongodb.png?branch=master'></a>
+
 scrapy-mongodb
 ==============
 MongoDB pipeline for Scrapy. This module supports both MongoDB in standalone setups and replica sets. This module will insert the items to MongoDB as soon as your spider finds data to extract.
