@@ -68,6 +68,9 @@ Write operations will block until they have been replicated to the specified num
 
 Release information
 -------------------
+**0.3.0 (2013-01-06)**
+- Minor supportive updates
+
 **0.2.0 (2013-01-06)**
 - Fixed connection problem for MongoDB replica sets
 - Fixed bad default parameter handling
