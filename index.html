@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>scrapy-mongodb by sebdah</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/sebdah/scrapy-mongodb">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/sebdah/scrapy-mongodb/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/sebdah/scrapy-mongodb/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>scrapy-mongodb</h1>
+          <p>MongoDB pipeline for Scrapy. This module supports both MongoDB in standalone setups and replica sets. This module will insert the items to MongoDB as soon as your spider finds data to extract.</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/sebdah">sebdah</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <p><a href="https://travis-ci.org/sebdah/scrapy-mongodb"><img src="https://secure.travis-ci.org/sebdah/scrapy-mongodb.png?branch=master"></a></p>
+
+<h1>scrapy-mongodb</h1>
+
+<p>MongoDB pipeline for Scrapy. This module supports both MongoDB in standalone setups and replica sets. This module will insert the items to MongoDB as soon as your spider finds data to extract.</p>
+
+<h2>Installation</h2>
+
+<p>Install via <code>pip</code>:</p>
+
+<pre><code>pip install scrapy-mongodb
+</code></pre>
+
+<h2>Basic configuration</h2>
+
+<p>Add <code>scrapy-mongodb</code> to your projects <code>settings.py</code> file.</p>
+
+<pre><code>ITEM_PIPELINES = [
+  'scrapy_mongodb.MongoDBPipeline',
+]
+
+MONGODB_HOST = 'localhost'
+MONGODB_PORT = 27017
+MONGODB_DATABASE = 'scrapy'
+MONGODB_COLLECTION = 'my_items'
+</code></pre>
+
+<p>If you want a unique key in your database, add the key to the configuration like this:</p>
+
+<pre><code>MONGODB_UNIQUE_KEY = 'url'
+</code></pre>
+
+<h2>Configure MongoDB replica sets</h2>
+
+<p>You can configure <code>scrapy-mongodb</code> to support MongoDB replica sets simply by adding the <code>MONGODB_REPLICA_SET</code> and <code>MONGODB_REPLICA_SET_HOSTS</code> config option:</p>
+
+<pre><code>MONGODB_REPLICA_SET = 'myReplicaSetName'
+MONGODB_REPLICA_SET_HOSTS = 'host1.example.com:27017,host2.example.com:27017,host3.example.com:27017'
+</code></pre>
+
+<p>If you need to ensure that your data has been replicated, use the <code>MONGODB_REPLICA_SET_W</code> option. It is an implementation of the <code>w</code> parameter in <code>pymongo</code>. Details from the <code>pymongo</code> documentation:</p>
+
+<pre><code>Write operations will block until they have been replicated to the specified number or tagged set of servers. w=&lt;int&gt; always includes the replica set primary (e.g. w=3 means write to the primary and wait until replicated to two secondaries). Passing w=0 disables write acknowledgement and all other write concern options.
+</code></pre>
+
+<h2>Full list of config options</h2>
+
+<p>Configuration options available. Put these in your <code>settings.py</code> file.</p>
+
+<table border="1">
+<tr>
+<th>Parameter</th>
+        <th>Default</th>
+        <th>Required?</th>
+        <th>Description</th>
+    </tr>
+<tr>
+<td>MONGODB_DATABASE</td>
+        <td>None</td>
+        <td>Yes</td>
+        <td>Database name to use. Does not need to exist.</td>
+    </tr>
+<tr>
+<td>MONGODB_COLLECTION</td>
+        <td>None</td>
+        <td>Yes</td>
+        <td>Collection within the database to use. Does not need to exist.</td>
+    </tr>
+<tr>
+<td>MONGODB_HOST</td>
+        <td>localhost</td>
+        <td>No</td>
+        <td>MongoDB host name to connect to.</td>
+    </tr>
+<tr>
+<td>MONGODB_PORT</td>
+        <td>27017</td>
+        <td>No</td>
+        <td>MongoDB port number to connect to.</td>
+    </tr>
+<tr>
+<td>MONGODB_UNIQUE_KEY</td>
+        <td>None</td>
+        <td>No</td>
+        <td>
+            If you want to have a unique key in the database, enter the key name here. scrapy-mongodb will ensure the key is properly indexed.
+        </td>
+    </tr>
+<tr>
+<td>MONGODB_FSYNC</td>
+        <td>False</td>
+        <td>No</td>
+        <td>
+            If this is set to True it forces MongoDB to wait for all files to be synced before returning.
+        </td>
+    </tr>
+<tr>
+<td>MONGODB_REPLICA_SET</td>
+        <td>None</td>
+        <td>Yes, for replica sets</td>
+        <td>
+            Set this if you want to enable replica set support. The option should be given the name of the replica set you want to connect to. MONGODB_HOST and MONGODB_PORT should point at your config server.
+        </td>
+    </tr>
+<tr>
+<td>MONGODB_REPLICA_SET_HOSTS</td>
+        <td>None</td>
+        <td>Yes, for replica sets</td>
+        <td>
+            Host string to use to connect to the replica set. See the hosts_or_uri option in the pymongo documentation 1).
+        </td>
+    </tr>
+<tr>
+<td>MONGODB_REPLICA_SET_W</td>
+        <td>0</td>
+        <td>No</td>
+        <td>
+            Best described in the pymongo documentation 1):<br>
+            Write operations will block until they have been replicated to the specified number or tagged set of servers. w= always includes the replica set primary (e.g. w=3 means write to the primary and wait until replicated to two secondaries). Passing w=0 disables write acknowledgement and all other write concern options.
+        </td>
+    </tr>
+</table><ol>
+<li><a href="http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient">http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient</a></li>
+</ol><h2>Release information</h2>
+
+<p><strong>0.4.0 (2013-01-07)</strong></p>
+
+<ul>
+<li>Added support for MongoDB replica set host strings</li>
+</ul><p><strong>0.3.0 (2013-01-06)</strong></p>
+
+<ul>
+<li>Minor supportive updates</li>
+</ul><p><strong>0.2.0 (2013-01-06)</strong></p>
+
+<ul>
+<li>Fixed connection problem for MongoDB replica sets</li>
+<li>Fixed bad default parameter handling</li>
+</ul><p><strong>0.1.0 (2013-01-06)</strong></p>
+
+<ul>
+<li>Initial release of the <code>scrapy-mongodb</code> pipeline module</li>
+<li>Support for MongoDB replica sets and standalone databases</li>
+</ul><h2>Instructions to release project to PyPi</h2>
+
+<pre><code>python setregister
+python setup.py sdist upload
+</code></pre>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
