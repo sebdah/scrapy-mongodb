@@ -79,26 +79,37 @@ Configuration options available. Put these in your `settings.py` file.
         <td>MONGODB_UNIQUE_KEY</td>
         <td>None</td>
         <td>No</td>
-        <td>If you want to have a unique key in the database, enter the key name here. scrapy-mongodb will ensure the key is properly indexed.</td>
+        <td>
+            If you want to have a unique key in the database, enter the key<br />
+            name here. scrapy-mongodb will ensure the key is properly indexed.
+        </td>
     </tr>
     <tr>
         <td>MONGODB_FSYNC</td>
         <td>False</td>
         <td>No</td>
-        <td>If this is set to True it forces MongoDB to wait for all files to be synced before returning.</td>
+        <td>
+            If this is set to True it forces MongoDB to wait for all files<br />
+            to be synced before returning.
+        </td>
     </tr>
     <tr>
         <td>MONGODB_REPLICA_SET</td>
         <td>None</td>
         <td>Yes, for replica sets</td>
-        <td>Set this if you want to enable replica set support. The option should be given the name of the replica set you want to connect to. MONGODB_HOST and MONGODB_PORT should point at your config server.</td>
+        <td>
+            Set this if you want to enable replica set support. The option<br />
+            should be given the name of the replica set you want to connect<br />
+            to. MONGODB_HOST and MONGODB_PORT should point at your config server.
+        </td>
     </tr>
     <tr>
         <td>MONGODB_REPLICA_SET_HOSTS</td>
         <td>None</td>
         <td>Yes, for replica sets</td>
         <td>
-            Host string to use to connect to the replica set. See the hosts_or_uri option in the pymongo documentation (http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient).
+            Host string to use to connect to the replica set. See the <br />
+            hosts_or_uri option in the pymongo documentation 1).
         </td>
     </tr>
     <tr>
@@ -106,13 +117,17 @@ Configuration options available. Put these in your `settings.py` file.
         <td>0</td>
         <td>No</td>
         <td>
-            Best described in the pymongo documentation:<br/>
-            Write operations will block until they have been replicated to the specified number or tagged set of servers. w=<int> always includes the replica set primary (e.g. w=3 means write to the primary and wait until replicated to two secondaries). Passing w=0 disables write acknowledgement and all other write concern options.
-            <br/>
-            http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient
+            Best described in the pymongo documentation 1):<br/>
+            Write operations will block until they have been replicated to<br />
+            the specified number or tagged set of servers. w=<int> always<br />
+            includes the replica set primary (e.g. w=3 means write to the<br />
+            primary and wait until replicated to two secondaries). Passing<br />
+            w=0 disables write acknowledgement and all other write concern options.
         </td>
     </tr>
 </table>
+
+1. [http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient](http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient)
 
 Release information
 -------------------
