@@ -34,11 +34,9 @@ You can configure `scrapy-mongodb` to support MongoDB replica sets simply by add
     MONGODB_REPLICA_SET = 'myReplicaSetName'
     MONGODB_REPLICA_SET_HOSTS = 'host1.example.com:27017,host2.example.com:27017,host3.example.com:27017'
 
-If you need to ensure that your data has been replicated, use the `` option. It is an implementation of the `w` parameter in `pymongo`. Details from the `pymongo` documentation:
+If you need to ensure that your data has been replicated, use the `MONGODB_REPLICA_SET_W` option. It is an implementation of the `w` parameter in `pymongo`. Details from the `pymongo` documentation:
 
-"""
-Write operations will block until they have been replicated to the specified number or tagged set of servers. w=<int> always includes the replica set primary (e.g. w=3 means write to the primary and wait until replicated to two secondaries). Passing w=0 disables write acknowledgement and all other write concern options.
-"""
+    Write operations will block until they have been replicated to the specified number or tagged set of servers. w=<int> always includes the replica set primary (e.g. w=3 means write to the primary and wait until replicated to two secondaries). Passing w=0 disables write acknowledgement and all other write concern options.
 
 Full list of config options
 ---------------------------
@@ -67,21 +65,20 @@ Configuration options available. Put these in your `settings.py` file.
         <td>MONGODB_HOST</td>
         <td>localhost</td>
         <td>No</td>
-        <td>MongoDB host name to connect to</td>
+        <td>MongoDB host name to connect to.</td>
     </tr>
     <tr>
         <td>MONGODB_PORT</td>
         <td>27017</td>
         <td>No</td>
-        <td>MongoDB port number to connect to</td>
+        <td>MongoDB port number to connect to.</td>
     </tr>
     <tr>
         <td>MONGODB_UNIQUE_KEY</td>
         <td>None</td>
         <td>No</td>
         <td>
-            If you want to have a unique key in the database, enter the key
-            name here. scrapy-mongodb will ensure the key is properly indexed.
+            If you want to have a unique key in the database, enter the key name here. scrapy-mongodb will ensure the key is properly indexed.
         </td>
     </tr>
     <tr>
@@ -89,8 +86,7 @@ Configuration options available. Put these in your `settings.py` file.
         <td>False</td>
         <td>No</td>
         <td>
-            If this is set to True it forces MongoDB to wait for all files
-            to be synced before returning.
+            If this is set to True it forces MongoDB to wait for all files to be synced before returning.
         </td>
     </tr>
     <tr>
@@ -98,9 +94,7 @@ Configuration options available. Put these in your `settings.py` file.
         <td>None</td>
         <td>Yes, for replica sets</td>
         <td>
-            Set this if you want to enable replica set support. The option
-            should be given the name of the replica set you want to connect
-            to. MONGODB_HOST and MONGODB_PORT should point at your config server.
+            Set this if you want to enable replica set support. The option should be given the name of the replica set you want to connect to. MONGODB_HOST and MONGODB_PORT should point at your config server.
         </td>
     </tr>
     <tr>
@@ -108,8 +102,7 @@ Configuration options available. Put these in your `settings.py` file.
         <td>None</td>
         <td>Yes, for replica sets</td>
         <td>
-            Host string to use to connect to the replica set. See the 
-            hosts_or_uri option in the pymongo documentation 1).
+            Host string to use to connect to the replica set. See the hosts_or_uri option in the pymongo documentation 1).
         </td>
     </tr>
     <tr>
@@ -118,11 +111,7 @@ Configuration options available. Put these in your `settings.py` file.
         <td>No</td>
         <td>
             Best described in the pymongo documentation 1):<br/>
-            Write operations will block until they have been replicated to
-            the specified number or tagged set of servers. w=<int> always
-            includes the replica set primary (e.g. w=3 means write to the
-            primary and wait until replicated to two secondaries). Passing
-            w=0 disables write acknowledgement and all other write concern options.
+            Write operations will block until they have been replicated to the specified number or tagged set of servers. w=<int> always includes the replica set primary (e.g. w=3 means write to the primary and wait until replicated to two secondaries). Passing w=0 disables write acknowledgement and all other write concern options.
         </td>
     </tr>
 </table>
