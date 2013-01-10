@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from pymongo import errors
 from pymongo.mongo_client import MongoClient
 from pymongo.mongo_replica_set_client import MongoReplicaSetClient
 from pymongo.read_preferences import ReadPreference
@@ -54,7 +55,12 @@ class MongoDBPipeline():
         'collection': 'items',
         'replica_set': None,
         'unique_key': None,
+        'buffer': None,
     }
+
+    # Item buffer
+    current_item = 0
+    item_buffer = []
 
     def __init__(self):
         """
@@ -123,6 +129,7 @@ class MongoDBPipeline():
             ('collection', 'MONGODB_COLLECTION'),
             ('replica_set', 'MONGODB_REPLICA_SET'),
             ('unique_key', 'MONGODB_UNIQUE_KEY'),
+            ('buffer', 'MONGODB_BUFFER_DATA'),
         ]
 
         for key, setting in options:
@@ -133,22 +140,46 @@ class MongoDBPipeline():
         """ Process the item and add it to MongoDB
 
         Args:
-            item (str)::
+            item (item)::
                 The item to put into MongoDB
             spider (str)::
                 The spider running the queries
         """
+        if self.config['buffer']:
+            self.current_item += 1
+            self.item_buffer.append(dict(item))
+            if self.current_item == self.config['buffer']:
+                self.current_item = 0
+                return self.insert_item(self.item_buffer, spider)
+            else:
+                return item
+        return self.insert_item(item, spider)
+
+    def insert_item(self, item, spider):
+        """ Process the item and add it to MongoDB
+
+        Args:
+            item (item) or [(item)]::
+                The item(s) to put into MongoDB
+            spider (str)::
+                The spider running the queries
+        """
+        if not isinstance(item, list):
+            item = dict(item)
+
         if self.config['unique_key'] is None:
-            self.collection.insert(dict(item))
+            try:
+                self.collection.insert(item, continue_on_error=True)
+            except errors.DuplicateKeyError:
+                pass
         else:
             self.collection.update(
                 {
                     self.config['unique_key']: item[self.config['unique_key']]
                 },
-                dict(item),
-                upsert=True)
+                item)
         log.msg(
-            'Stored item in MongoDB %s/%s' % (
+            'Stored item(s) in MongoDB %s/%s' % (
                 self.config['database'], self.config['collection']),
             level=log.DEBUG, spider=spider)
         return item
