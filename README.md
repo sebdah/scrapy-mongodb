@@ -4,6 +4,8 @@ scrapy-mongodb
 ==============
 MongoDB pipeline for Scrapy. This module supports both MongoDB in standalone setups and replica sets. This module will insert the items to MongoDB as soon as your spider finds data to extract.
 
+`scrapy-mongodb` can also buffer objects if you prefer to write chunks of data to MongoDB rather than one write per document. See the `MONGODB_BUFFER_DATA` option for details.
+
 Installation
 ------------
 Install via `pip`:
@@ -68,6 +70,14 @@ Configuration options available. Put these in your `settings.py` file.
             Add the URI to the MongoDB instance or replica set you want to connect to. It must start with mongodb://. See more in the MongoDB docs 1). Some example strings:<br />
             mongodb://user:pass@host:port<br />
             mongodb://user:pass@host:port,host2:port2,
+        </td>
+    </tr>
+    <tr>
+        <td>MONGODB_BUFFER_DATA</td>
+        <td>None</td>
+        <td>No</td>
+        <td>
+            To ease the load on MongoDB you might want to buffer data in the client before sending it to MongoDB. Set this option to the number of items you want to buffer in the client before sending them to MongoDB.
         </td>
     </tr>
     <tr>
