@@ -12,8 +12,10 @@ Install via `pip`:
 
     pip install scrapy-mongodb
 
-Basic configuration
--------------------
+Configuration
+-------------
+
+### Basic configuration example
 Add `scrapy-mongodb` to your projects `settings.py` file.
 
     ITEM_PIPELINES = [
@@ -28,8 +30,8 @@ If you want a unique key in your database, add the key to the configuration like
 
     MONGODB_UNIQUE_KEY = 'url'
 
-Configure MongoDB replica sets
-------------------------------
+### Configure MongoDB replica sets
+
 You can configure `scrapy-mongodb` to support MongoDB replica sets simply by adding the `MONGODB_REPLICA_SET` and `MONGODB_REPLICA_SET_HOSTS` config option:
 
     MONGODB_REPLICA_SET = 'myReplicaSetName'
@@ -38,6 +40,32 @@ You can configure `scrapy-mongodb` to support MongoDB replica sets simply by add
 If you need to ensure that your data has been replicated, use the `MONGODB_REPLICA_SET_W` option. It is an implementation of the `w` parameter in `pymongo`. Details from the `pymongo` documentation:
 
     Write operations will block until they have been replicated to the specified number or tagged set of servers. w=<int> always includes the replica set primary (e.g. w=3 means write to the primary and wait until replicated to two secondaries). Passing w=0 disables write acknowledgement and all other write concern options.
+
+### Configure data buffering
+
+To ease the load on MongoDB `scrapy-mongodb` has a buffering feature. You can enable it by simply setting the `MONGODB_BUFFER_DATA` to the buffer size you want. If you set it to `10` `scrapy-mongodb` will write 10 documents at a time to MongoDB.
+
+    MONGODB_BUFFER_DATA = 10
+
+It is not possible to combine this feature with `MONGODB_UNIQUE_KEY`. Technically due to that the `update` method in `pymongo` doesn't support multi doc updates.
+
+### Adding timestamps
+
+`scrapy-mongodb` can append a timestamp to your item when inserting it to the database. Enable this feature by like this:
+
+    MONGODB_ADD_TIMESTAMP = True
+
+This will modify the document to look something like this:
+
+    {
+        ...
+        'scrapy-mongodb': {
+            'ts': ISODate("2013-01-10T07:43:56.797Z")
+        }
+        ...
+    }
+
+The timestamp is in UTC.
 
 Full list of config options
 ---------------------------
@@ -86,6 +114,15 @@ Configuration options available. Put these in your `settings.py` file.
         <td>No</td>
         <td>
             To ease the load on MongoDB you might want to buffer data in the client before sending it to MongoDB. Set this option to the number of items you want to buffer in the client before sending them to MongoDB. Setting a MONGODB_UNIQUE_KEY together with MONGODB_BUFFER_DATA is not supported.
+        </td>
+    </tr>
+    <tr>
+        <td>MONGODB_ADD_TIMESTAMP</td>
+        <td>False</td>
+        <td>No</td>
+        <td>
+            If this is set to True, scrapy-mongodb will add a timestamp key to the documents. The document will look like this:<br />
+            { scrapy_mongo: { ts: ISODate("2013-01-10T07:43:56.797Z") } }
         </td>
     </tr>
     <tr>
