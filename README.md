@@ -18,8 +18,7 @@ Add `scrapy-mongodb` to your projects `settings.py` file.
       'scrapy_mongodb.MongoDBPipeline',
     ]
 
-    MONGODB_HOST = 'localhost'
-    MONGODB_PORT = 27017
+    MONGODB_URI = 'mongodb://localhost:27017'
     MONGODB_DATABASE = 'scrapy'
     MONGODB_COLLECTION = 'my_items'
 
@@ -32,7 +31,7 @@ Configure MongoDB replica sets
 You can configure `scrapy-mongodb` to support MongoDB replica sets simply by adding the `MONGODB_REPLICA_SET` and `MONGODB_REPLICA_SET_HOSTS` config option:
 
     MONGODB_REPLICA_SET = 'myReplicaSetName'
-    MONGODB_REPLICA_SET_HOSTS = 'host1.example.com:27017,host2.example.com:27017,host3.example.com:27017'
+    MONGODB_URI = 'mongodb://host1.example.com:27017,host2.example.com:27017,host3.example.com:27017'
 
 If you need to ensure that your data has been replicated, use the `MONGODB_REPLICA_SET_W` option. It is an implementation of the `w` parameter in `pymongo`. Details from the `pymongo` documentation:
 
@@ -51,27 +50,25 @@ Configuration options available. Put these in your `settings.py` file.
     </tr>
     <tr>
         <td>MONGODB_DATABASE</td>
-        <td>None</td>
-        <td>Yes</td>
+        <td>scrapy-mongodb</td>
+        <td>No</td>
         <td>Database name to use. Does not need to exist.</td>
     </tr>
     <tr>
         <td>MONGODB_COLLECTION</td>
-        <td>None</td>
-        <td>Yes</td>
+        <td>items</td>
+        <td>No</td>
         <td>Collection within the database to use. Does not need to exist.</td>
     </tr>
     <tr>
-        <td>MONGODB_HOST</td>
-        <td>localhost</td>
+        <td>MONGODB_URI</td>
+        <td>mongodb://localhost:27017</td>
         <td>No</td>
-        <td>MongoDB host name to connect to.</td>
-    </tr>
-    <tr>
-        <td>MONGODB_PORT</td>
-        <td>27017</td>
-        <td>No</td>
-        <td>MongoDB port number to connect to.</td>
+        <td>
+            Add the URI to the MongoDB instance or replica set you want to connect to. It must start with mongodb://. See more in the MongoDB docs 1). Some example strings:<br />
+            mongodb://user:pass@host:port<br />
+            mongodb://user:pass@host:port,host2:port2,
+        </td>
     </tr>
     <tr>
         <td>MONGODB_UNIQUE_KEY</td>
@@ -98,25 +95,50 @@ Configuration options available. Put these in your `settings.py` file.
         </td>
     </tr>
     <tr>
-        <td>MONGODB_REPLICA_SET_HOSTS</td>
-        <td>None</td>
-        <td>Yes, for replica sets</td>
-        <td>
-            Host string to use to connect to the replica set. See the hosts_or_uri option in the pymongo documentation 1).
-        </td>
-    </tr>
-    <tr>
         <td>MONGODB_REPLICA_SET_W</td>
         <td>0</td>
         <td>No</td>
         <td>
-            Best described in the pymongo documentation 1):<br/>
+            Best described in the pymongo documentation 2):<br/>
             Write operations will block until they have been replicated to the specified number or tagged set of servers. w=<int> always includes the replica set primary (e.g. w=3 means write to the primary and wait until replicated to two secondaries). Passing w=0 disables write acknowledgement and all other write concern options.
         </td>
     </tr>
 </table>
 
-1. [http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient](http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient)
+1. [http://docs.mongodb.org/manual/reference/connection-string/](http://docs.mongodb.org/manual/reference/connection-string/)
+2. [http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient](http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient)
+
+### Deprecated config options
+
+<table border='1'>
+    <tr>
+        <td>MONGODB_HOST</td>
+        <td>localhost</td>
+        <td>No</td>
+        <td>
+            DEPRECATED since scrapy-mongodb 0.5.0, use MONGODB_URI instead.<br />
+            MongoDB host name to connect to.
+        </td>
+    </tr>
+    <tr>
+        <td>MONGODB_PORT</td>
+        <td>27017</td>
+        <td>No</td>
+        <td>
+            DEPRECATED since scrapy-mongodb 0.5.0, use MONGODB_URI instead.<br />
+            MongoDB port number to connect to.
+        </td>
+    </tr>
+    <tr>
+        <td>MONGODB_REPLICA_SET_HOSTS</td>
+        <td>None</td>
+        <td>No</td>
+        <td>
+            DEPRECATED since scrapy-mongodb 0.5.0, use MONGODB_URI instead.<br />
+            Host string to use to connect to the replica set. See the hosts_or_uri option in the pymongo documentation.
+        </td>
+    </tr>
+</table>
 
 Release information
 -------------------
