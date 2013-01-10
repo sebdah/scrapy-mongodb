@@ -72,20 +72,20 @@ Configuration options available. Put these in your `settings.py` file.
             mongodb://user:pass@host:port,host2:port2,
         </td>
     </tr>
-    <tr>
-        <td>MONGODB_BUFFER_DATA</td>
-        <td>None</td>
-        <td>No</td>
-        <td>
-            To ease the load on MongoDB you might want to buffer data in the client before sending it to MongoDB. Set this option to the number of items you want to buffer in the client before sending them to MongoDB.
-        </td>
-    </tr>
-    <tr>
+        <tr>
         <td>MONGODB_UNIQUE_KEY</td>
         <td>None</td>
         <td>No</td>
         <td>
             If you want to have a unique key in the database, enter the key name here. scrapy-mongodb will ensure the key is properly indexed.
+        </td>
+    </tr>
+    <tr>
+        <td>MONGODB_BUFFER_DATA</td>
+        <td>None</td>
+        <td>No</td>
+        <td>
+            To ease the load on MongoDB you might want to buffer data in the client before sending it to MongoDB. Set this option to the number of items you want to buffer in the client before sending them to MongoDB. Setting a MONGODB_UNIQUE_KEY together with MONGODB_BUFFER_DATA is not supported.
         </td>
     </tr>
     <tr>
