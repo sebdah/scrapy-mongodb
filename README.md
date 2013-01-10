@@ -159,5 +159,5 @@ Release information
 Instructions to release project to PyPi
 ---------------------------------------
 
-    python setregister
+    python setup.py register
     python setup.py sdist upload
