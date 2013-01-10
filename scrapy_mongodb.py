@@ -19,6 +19,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import datetime
 
 from pymongo import errors
 from pymongo.mongo_client import MongoClient
@@ -56,6 +57,7 @@ class MongoDBPipeline():
         'replica_set': None,
         'unique_key': None,
         'buffer': None,
+        'append_timestamp': False,
     }
 
     # Item buffer
@@ -130,6 +132,7 @@ class MongoDBPipeline():
             ('replica_set', 'MONGODB_REPLICA_SET'),
             ('unique_key', 'MONGODB_UNIQUE_KEY'),
             ('buffer', 'MONGODB_BUFFER_DATA'),
+            ('append_timestamp', 'MONGODB_ADD_TIMESTAMP'),
         ]
 
         for key, setting in options:
@@ -157,7 +160,10 @@ not supported""")
         """
         if self.config['buffer']:
             self.current_item += 1
-            self.item_buffer.append(dict(item))
+            item = dict(item)
+            if self.config['append_timestamp']:
+                item['scrapy-mongodb'] = { 'ts': datetime.datetime.utcnow() }
+            self.item_buffer.append()
             if self.current_item == self.config['buffer']:
                 self.current_item = 0
                 return self.insert_item(self.item_buffer, spider)
@@ -176,6 +182,8 @@ not supported""")
         """
         if not isinstance(item, list):
             item = dict(item)
+            if self.config['append_timestamp']:
+                item['scrapy-mongodb'] = { 'ts': datetime.datetime.utcnow() }
 
         if self.config['unique_key'] is None:
             try:
