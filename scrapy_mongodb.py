@@ -45,91 +45,110 @@ class MongoDBPipeline():
     """
     MongoDB pipeline class
     """
+    # Default options
+    config = {
+        'uri': 'mongodb://localhost:27017',
+        'fsync': False,
+        'write_concern': 0,
+        'database': 'scrapy-mongodb',
+        'collection': 'items',
+        'replica_set': None,
+        'unique_key': None,
+    }
+
     def __init__(self):
         """
         Constructor
         """
-        #
-        # Set default settings if they are not provided by the user
-        #
-        if not_set(settings['MONGODB_HOST']):
-            mongodb_host = 'localhost'
-        else:
-            mongodb_host = settings['MONGODB_HOST']
+        # Configure the connection
+        self.configure()
 
-        if not_set(settings['MONGODB_PORT']):
-            mongodb_port = 27017
-        else:
-            mongodb_port = settings['MONGODB_PORT']
-
-        if not_set(settings['MONGODB_FSYNC']):
-            mongodb_fsync = False
-        else:
-            mongodb_fsync = settings['MONGODB_FSYNC']
-
-        if not not_set(settings['MONGODB_REPLICA_SET']):
-            #
-            # Connecting to a MongoDB replica set
-            #
-
-            # Check forced replication
-            if not_set(settings['MONGODB_REPLICA_SET_W']):
-                mongodb_rs_w = 0
-            else:
-                mongodb_rs_w = settings['MONGODB_REPLICA_SET_W']
-
+        if self.config['replica_set'] is not None:
             connection = MongoReplicaSetClient(
-                settings['MONGODB_REPLICA_SET_HOSTS'],
-                replicaSet=settings['MONGODB_REPLICA_SET'],
-                w=mongodb_rs_w,
-                fsync=mongodb_fsync,
+                self.config['uri'],
+                replicaSet=self.config['replica_set'],
+                w=self.config['write_concern'],
+                fsync=self.config['fsync'],
                 read_preference=ReadPreference.PRIMARY_PREFERRED)
-
         else:
-            #
             # Connecting to a stand alone MongoDB
-            #
             connection = MongoClient(
-                host=mongodb_host,
-                port=mongodb_port,
-                fsync=mongodb_fsync,
+                self.config['uri'],
+                fsync=self.config['fsync'],
                 read_preference=ReadPreference.PRIMARY)
 
         # Set up the collection
-        database = connection[settings['MONGODB_DATABASE']]
-        self.collection = database[settings['MONGODB_COLLECTION']]
-        log.msg('Connected to MongoDB %s:%i, using "%s/%s"' % (
-            mongodb_host,
-            mongodb_port,
-            settings['MONGODB_DATABASE'],
-            settings['MONGODB_COLLECTION']))
-
-        # Set the unique key if needed
-        if not_set(settings['MONGODB_UNIQUE_KEY']):
-            self.unique_key = None
-        else:
-            self.unique_key = settings['MONGODB_UNIQUE_KEY']
+        database = connection[self.config['database']]
+        self.collection = database[self.config['collection']]
+        log.msg('Connected to MongoDB %s, using "%s/%s"' % (
+            self.config['uri'],
+            self.config['database'],
+            self.config['collection']))
 
         # Ensure unique index
-        if self.unique_key:
-            self.collection.ensure_index(self.unique_key, unique=True)
-            log.msg('Ensuring index for key %s' % self.unique_key)
+        if self.config['unique_key']:
+            self.collection.ensure_index(self.config['unique_key'], unique=True)
+            log.msg('Ensuring index for key %s' % self.config['unique_key'])
+
+    def configure(self):
+        """ Configure the MongoDB connection """
+        # Handle deprecated configuration
+        if not not_set(settings['MONGODB_HOST']):
+            log.msg('DeprecationWarning: MONGODB_HOST is deprecated',
+                level=log.WARNING)
+            mongodb_host = settings['MONGODB_HOST']
+
+            if not not_set(settings['MONGODB_PORT']):
+                log.msg('DeprecationWarning: MONGODB_PORT is deprecated',
+                    level=log.WARNING)
+                self.config['uri'] = 'mongodb://%s:%i' % (
+                    mongodb_host, settings['MONGODB_PORT'])
+            else:
+                self.config['uri'] = 'mongodb://%s:27017' % mongodb_host
+
+        if not not_set(settings['MONGODB_REPLICA_SET']):
+            if not not_set(settings['MONGODB_REPLICA_SET_HOSTS']):
+                log.msg(
+                    'DeprecationWarning: MONGODB_REPLICA_SET_HOSTS is deprecated',
+                    level=log.WARNING)
+                self.config['uri'] = 'mongodb://%s' % (
+                    settings['MONGODB_REPLICA_SET_HOSTS'])
+
+        # Set all regular options
+        options = [
+            ('uri', 'MONGODB_URI'),
+            ('fsync', 'MONGODB_FSYNC'),
+            ('write_concern', 'MONGODB_REPLICA_SET_W'),
+            ('database', 'MONGODB_DATABASE'),
+            ('collection', 'MONGODB_COLLECTION'),
+            ('replica_set', 'MONGODB_REPLICA_SET'),
+            ('unique_key', 'MONGODB_UNIQUE_KEY'),
+        ]
+
+        for key, setting in options:
+            if not not_set(settings[setting]):
+                self.config[key] = settings[setting]
 
     def process_item(self, item, spider):
+        """ Process the item and add it to MongoDB
+
+        Args:
+            item (str)::
+                The item to put into MongoDB
+            spider (str)::
+                The spider running the queries
         """
-        Process the item and add it to MongoDB
-        """
-        if self.unique_key is None:
+        if self.config['unique_key'] is None:
             self.collection.insert(dict(item))
         else:
             self.collection.update(
                 {
-                    self.unique_key: item[self.unique_key]
+                    self.config['unique_key']: item[self.config['unique_key']]
                 },
                 dict(item),
                 upsert=True)
-        log.msg('Stored item in MongoDB %s/%s' % (
-            settings['MONGODB_DATABASE'],
-            settings['MONGODB_COLLECTION']),
-                    level=log.DEBUG, spider=spider)
+        log.msg(
+            'Stored item in MongoDB %s/%s' % (
+                self.config['database'], self.config['collection']),
+            level=log.DEBUG, spider=spider)
         return item
