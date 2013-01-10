@@ -136,6 +136,16 @@ class MongoDBPipeline():
             if not not_set(settings[setting]):
                 self.config[key] = settings[setting]
 
+        # Check for illegal configuration
+        if self.config['buffer'] and self.config['unique_key']:
+            log.msg("""\
+IllegalConfig: Settings both MONGODB_BUFFER_DATA and MONGODB_UNIQUE_KEY is \
+not supported""",
+                level=log.ERROR)
+            raise SyntaxError("""\
+IllegalConfig: Settings both MONGODB_BUFFER_DATA and MONGODB_UNIQUE_KEY is \
+not supported""")
+
     def process_item(self, item, spider):
         """ Process the item and add it to MongoDB
 
