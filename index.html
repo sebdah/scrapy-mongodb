@@ -1,51 +1,55 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <title>scrapy-mongodb by sebdah</title>
 
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
-    <title>scrapy-mongodb by sebdah</title>
   </head>
-
   <body>
-    <header>
-      <div class="inner">
+    <div class="wrapper">
+      <header>
         <h1>scrapy-mongodb</h1>
-        <h2>MongoDB pipeline for Scrapy. This module supports both MongoDB in standalone setups and replica sets. This module will insert the items to MongoDB as soon as your spider finds data to extract.</h2>
-        <a href="https://github.com/sebdah/scrapy-mongodb" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
+        <p>MongoDB pipeline for Scrapy. This module supports both MongoDB in standalone setups and replica sets. This module will insert the items to MongoDB as soon as your spider finds data to extract.</p>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <p><a href="https://travis-ci.org/sebdah/scrapy-mongodb"><img src="https://secure.travis-ci.org/sebdah/scrapy-mongodb.png?branch=master"></a></p>
+        <p class="view"><a href="https://github.com/sebdah/scrapy-mongodb">View the Project on GitHub <small>sebdah/scrapy-mongodb</small></a></p>
 
-<h1>scrapy-mongodb</h1>
+
+        <ul>
+          <li><a href="https://github.com/sebdah/scrapy-mongodb/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/sebdah/scrapy-mongodb/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/sebdah/scrapy-mongodb">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><a href="https://travis-ci.org/sebdah/scrapy-mongodb"><img src="https://secure.travis-ci.org/sebdah/scrapy-mongodb.png?branch=master"></a></p>
+
+<h1>
+<a name="scrapy-mongodb" class="anchor" href="#scrapy-mongodb"><span class="octicon octicon-link"></span></a>scrapy-mongodb</h1>
 
 <p>MongoDB pipeline for Scrapy. This module supports both MongoDB in standalone setups and replica sets. This module will insert the items to MongoDB as soon as your spider finds data to extract.</p>
 
 <p><code>scrapy-mongodb</code> can also buffer objects if you prefer to write chunks of data to MongoDB rather than one write per document. See the <code>MONGODB_BUFFER_DATA</code> option for details.</p>
 
-<h2>Installation</h2>
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <p>Install via <code>pip</code>:</p>
 
 <pre><code>pip install scrapy-mongodb
 </code></pre>
 
-<h2>Configuration</h2>
+<h2>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h2>
 
-<h3>Basic configuration example</h3>
+<h3>
+<a name="basic-configuration-example" class="anchor" href="#basic-configuration-example"><span class="octicon octicon-link"></span></a>Basic configuration example</h3>
 
 <p>Add <code>scrapy-mongodb</code> to your projects <code>settings.py</code> file.</p>
 
@@ -63,7 +67,8 @@ MONGODB_COLLECTION = 'my_items'
 <pre><code>MONGODB_UNIQUE_KEY = 'url'
 </code></pre>
 
-<h3>Configure MongoDB replica sets</h3>
+<h3>
+<a name="configure-mongodb-replica-sets" class="anchor" href="#configure-mongodb-replica-sets"><span class="octicon octicon-link"></span></a>Configure MongoDB replica sets</h3>
 
 <p>You can configure <code>scrapy-mongodb</code> to support MongoDB replica sets simply by adding the <code>MONGODB_REPLICA_SET</code> and <code>MONGODB_REPLICA_SET_HOSTS</code> config option:</p>
 
@@ -76,7 +81,8 @@ MONGODB_URI = 'mongodb://host1.example.com:27017,host2.example.com:27017,host3.e
 <pre><code>Write operations will block until they have been replicated to the specified number or tagged set of servers. w=&lt;int&gt; always includes the replica set primary (e.g. w=3 means write to the primary and wait until replicated to two secondaries). Passing w=0 disables write acknowledgement and all other write concern options.
 </code></pre>
 
-<h3>Configure data buffering</h3>
+<h3>
+<a name="configure-data-buffering" class="anchor" href="#configure-data-buffering"><span class="octicon octicon-link"></span></a>Configure data buffering</h3>
 
 <p>To ease the load on MongoDB <code>scrapy-mongodb</code> has a buffering feature. You can enable it by simply setting the <code>MONGODB_BUFFER_DATA</code> to the buffer size you want. If you set it to <code>10</code> <code>scrapy-mongodb</code> will write 10 documents at a time to MongoDB.</p>
 
@@ -85,7 +91,8 @@ MONGODB_URI = 'mongodb://host1.example.com:27017,host2.example.com:27017,host3.e
 
 <p>It is not possible to combine this feature with <code>MONGODB_UNIQUE_KEY</code>. Technically due to that the <code>update</code> method in <code>pymongo</code> doesn't support multi doc updates.</p>
 
-<h3>Adding timestamps</h3>
+<h3>
+<a name="adding-timestamps" class="anchor" href="#adding-timestamps"><span class="octicon octicon-link"></span></a>Adding timestamps</h3>
 
 <p><code>scrapy-mongodb</code> can append a timestamp to your item when inserting it to the database. Enable this feature by like this:</p>
 
@@ -105,7 +112,8 @@ MONGODB_URI = 'mongodb://host1.example.com:27017,host2.example.com:27017,host3.e
 
 <p>The timestamp is in UTC.</p>
 
-<h2>Full list of config options</h2>
+<h2>
+<a name="full-list-of-config-options" class="anchor" href="#full-list-of-config-options"><span class="octicon octicon-link"></span></a>Full list of config options</h2>
 
 <p>Configuration options available. Put these in your <code>settings.py</code> file.</p>
 
@@ -191,7 +199,8 @@ MONGODB_URI = 'mongodb://host1.example.com:27017,host2.example.com:27017,host3.e
 </table><ol>
 <li><a href="http://docs.mongodb.org/manual/reference/connection-string/">http://docs.mongodb.org/manual/reference/connection-string/</a></li>
 <li><a href="http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient">http://api.mongodb.org/python/current/api/pymongo/mongo_replica_set_client.html#pymongo.mongo_replica_set_client.MongoReplicaSetClient</a></li>
-</ol><h3>Deprecated config options</h3>
+</ol><h3>
+<a name="deprecated-config-options" class="anchor" href="#deprecated-config-options"><span class="octicon octicon-link"></span></a>Deprecated config options</h3>
 
 <table border="1">
 <tr>
@@ -221,7 +230,8 @@ MONGODB_URI = 'mongodb://host1.example.com:27017,host2.example.com:27017,host3.e
             Host string to use to connect to the replica set. See the hosts_or_uri option in the pymongo documentation.
         </td>
     </tr>
-</table><h2>Release information</h2>
+</table><h2>
+<a name="release-information" class="anchor" href="#release-information"><span class="octicon octicon-link"></span></a>Release information</h2>
 
 <p><strong>0.5.0 (2013-01-10)</strong></p>
 
@@ -252,31 +262,20 @@ MONGODB_URI = 'mongodb://host1.example.com:27017,host2.example.com:27017,host3.e
 <ul>
 <li>Initial release of the <code>scrapy-mongodb</code> pipeline module</li>
 <li>Support for MongoDB replica sets and standalone databases</li>
-</ul><h2>Instructions to release project to PyPi</h2>
+</ul><h2>
+<a name="instructions-to-release-project-to-pypi" class="anchor" href="#instructions-to-release-project-to-pypi"><span class="octicon octicon-link"></span></a>Instructions to release project to PyPi</h2>
 
 <pre><code>python setup.py register
 python setup.py sdist upload
 </code></pre>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/sebdah/scrapy-mongodb/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/sebdah/scrapy-mongodb/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/sebdah/scrapy-mongodb"></a> is maintained by <a href="https://github.com/sebdah">sebdah</a>.</p>
-
-          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/sebdah">sebdah</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
     </div>
-
-            <script type="text/javascript">
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
