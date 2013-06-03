@@ -189,6 +189,9 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.5.1 (2013-06-03)**
+- Updated docstrings
+
 **0.5.0 (2013-01-10)**
 - Implemented feature [#5 Add flag for setting timestamps in the database](https://github.com/sebdah/scrapy-mongodb/issues/5)
 - Implemented feature [#4 Implement support for MongoDB authentication](https://github.com/sebdah/scrapy-mongodb/issues/4)
