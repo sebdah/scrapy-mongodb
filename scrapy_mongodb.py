@@ -31,10 +31,9 @@ from scrapy.conf import settings
 
 
 def not_set(string):
-    """
-    Check if a string is None or ''
+    """ Check if a string is None or ''
 
-    Returns True if the string is empty
+    :returns: bool - True if the string is empty
     """
     if string is None:
         return True
@@ -44,9 +43,7 @@ def not_set(string):
 
 
 class MongoDBPipeline():
-    """
-    MongoDB pipeline class
-    """
+    """ MongoDB pipeline class """
     # Default options
     config = {
         'uri': 'mongodb://localhost:27017',
@@ -65,9 +62,7 @@ class MongoDBPipeline():
     item_buffer = []
 
     def __init__(self):
-        """
-        Constructor
-        """
+        """ Constructor """
         # Configure the connection
         self.configure()
 
@@ -152,11 +147,11 @@ not supported""")
     def process_item(self, item, spider):
         """ Process the item and add it to MongoDB
 
-        Args:
-            item (item)::
-                The item to put into MongoDB
-            spider (str)::
-                The spider running the queries
+        :type item: Item object
+        :param item: The item to put into MongoDB
+        :type spider: BaseSpider object
+        :param spider: The spider running the queries
+        :returns: Item object
         """
         if self.config['buffer']:
             self.current_item += 1
@@ -174,11 +169,11 @@ not supported""")
     def insert_item(self, item, spider):
         """ Process the item and add it to MongoDB
 
-        Args:
-            item (item) or [(item)]::
-                The item(s) to put into MongoDB
-            spider (str)::
-                The spider running the queries
+        :type item: (Item object) or [(Item object)]
+        :param item: The item(s) to put into MongoDB
+        :type spider: BaseSpider object
+        :param spider: The spider running the queries
+        :returns: Item object
         """
         if not isinstance(item, list):
             item = dict(item)
