@@ -220,8 +220,7 @@ Release information
 Instructions to release project to PyPi
 ---------------------------------------
 
-    python setup.py register
-    python setup.py sdist upload
+    make release
 
 Author
 ------
