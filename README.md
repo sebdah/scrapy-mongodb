@@ -189,6 +189,11 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.6.0 (2013-06-04)**
+- [#6 ScrapyDeprecationWarning: crawler.settings](https://github.com/sebdah/scrapy-mongodb/issues/6)
+- [#7 Use Python format() for output](https://github.com/sebdah/scrapy-mongodb/issues/7)
+- [#8 Bug when upserting items with a unique key](https://github.com/sebdah/scrapy-mongodb/issues/8)
+
 **0.5.1 (2013-06-03)**
 - Updated docstrings
 
