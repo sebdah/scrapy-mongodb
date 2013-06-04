@@ -83,7 +83,7 @@ class MongoDBPipeline():
         # Set up the collection
         database = connection[self.config['database']]
         self.collection = database[self.config['collection']]
-        log.msg('Connected to MongoDB %s, using "%s/%s"' % (
+        log.msg('Connected to MongoDB {0}, using "{1}/{2}"'.format(
             self.config['uri'],
             self.config['database'],
             self.config['collection']))
@@ -91,30 +91,37 @@ class MongoDBPipeline():
         # Ensure unique index
         if self.config['unique_key']:
             self.collection.ensure_index(self.config['unique_key'], unique=True)
-            log.msg('Ensuring index for key %s' % self.config['unique_key'])
+            log.msg('Ensuring index for key {0}'.format(
+                self.config['unique_key']))
 
     def configure(self):
         """ Configure the MongoDB connection """
         # Handle deprecated configuration
         if not not_set(settings['MONGODB_HOST']):
-            log.msg('DeprecationWarning: MONGODB_HOST is deprecated',
+            log.msg(
+                'DeprecationWarning: MONGODB_HOST is deprecated',
                 level=log.WARNING)
             mongodb_host = settings['MONGODB_HOST']
 
             if not not_set(settings['MONGODB_PORT']):
-                log.msg('DeprecationWarning: MONGODB_PORT is deprecated',
+                log.msg(
+                    'DeprecationWarning: MONGODB_PORT is deprecated',
                     level=log.WARNING)
-                self.config['uri'] = 'mongodb://%s:%i' % (
-                    mongodb_host, settings['MONGODB_PORT'])
+                self.config['uri'] = 'mongodb://{0}:{1:i}'.format(
+                    mongodb_host,
+                    settings['MONGODB_PORT'])
             else:
-                self.config['uri'] = 'mongodb://%s:27017' % mongodb_host
+                self.config['uri'] = 'mongodb://{0}:27017'.format(mongodb_host)
 
         if not not_set(settings['MONGODB_REPLICA_SET']):
             if not not_set(settings['MONGODB_REPLICA_SET_HOSTS']):
                 log.msg(
-                    'DeprecationWarning: MONGODB_REPLICA_SET_HOSTS is deprecated',
+                    (
+                        'DeprecationWarning: '
+                        'MONGODB_REPLICA_SET_HOSTS is deprecated'
+                    ),
                     level=log.WARNING)
-                self.config['uri'] = 'mongodb://%s' % (
+                self.config['uri'] = 'mongodb://{0}'.format(
                     settings['MONGODB_REPLICA_SET_HOSTS'])
 
         # Set all regular options
@@ -136,13 +143,17 @@ class MongoDBPipeline():
 
         # Check for illegal configuration
         if self.config['buffer'] and self.config['unique_key']:
-            log.msg("""\
-IllegalConfig: Settings both MONGODB_BUFFER_DATA and MONGODB_UNIQUE_KEY is \
-not supported""",
+            log.msg(
+                (
+                    'IllegalConfig: Settings both MONGODB_BUFFER_DATA '
+                    'and MONGODB_UNIQUE_KEY is not supported'
+                ),
                 level=log.ERROR)
-            raise SyntaxError("""\
-IllegalConfig: Settings both MONGODB_BUFFER_DATA and MONGODB_UNIQUE_KEY is \
-not supported""")
+            raise SyntaxError(
+                (
+                    'IllegalConfig: Settings both MONGODB_BUFFER_DATA '
+                    'and MONGODB_UNIQUE_KEY is not supported'
+                ))
 
     def process_item(self, item, spider):
         """ Process the item and add it to MongoDB
@@ -156,14 +167,19 @@ not supported""")
         if self.config['buffer']:
             self.current_item += 1
             item = dict(item)
+
             if self.config['append_timestamp']:
                 item['scrapy-mongodb'] = { 'ts': datetime.datetime.utcnow() }
+
             self.item_buffer.append()
+
             if self.current_item == self.config['buffer']:
                 self.current_item = 0
                 return self.insert_item(self.item_buffer, spider)
+
             else:
                 return item
+
         return self.insert_item(item, spider)
 
     def insert_item(self, item, spider):
@@ -177,6 +193,7 @@ not supported""")
         """
         if not isinstance(item, list):
             item = dict(item)
+
             if self.config['append_timestamp']:
                 item['scrapy-mongodb'] = { 'ts': datetime.datetime.utcnow() }
 
@@ -185,6 +202,7 @@ not supported""")
                 self.collection.insert(item, continue_on_error=True)
             except errors.DuplicateKeyError:
                 pass
+
         else:
             self.collection.update(
                 {
@@ -192,8 +210,11 @@ not supported""")
                 },
                 item,
                 upsert=True)
+
         log.msg(
-            'Stored item(s) in MongoDB %s/%s' % (
+            'Stored item(s) in MongoDB {0}/{1}'.format(
                 self.config['database'], self.config['collection']),
-            level=log.DEBUG, spider=spider)
+            level=log.DEBUG,
+            spider=spider)
+
         return item
