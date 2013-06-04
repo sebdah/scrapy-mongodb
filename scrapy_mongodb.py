@@ -190,7 +190,8 @@ not supported""")
                 {
                     self.config['unique_key']: item[self.config['unique_key']]
                 },
-                item)
+                item,
+                upsert=True)
         log.msg(
             'Stored item(s) in MongoDB %s/%s' % (
                 self.config['database'], self.config['collection']),
