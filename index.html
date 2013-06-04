@@ -233,7 +233,17 @@ MONGODB_URI = 'mongodb://host1.example.com:27017,host2.example.com:27017,host3.e
 </table><h2>
 <a name="release-information" class="anchor" href="#release-information"><span class="octicon octicon-link"></span></a>Release information</h2>
 
-<p><strong>0.5.0 (2013-01-10)</strong></p>
+<p><strong>0.6.0 (2013-06-04)</strong></p>
+
+<ul>
+<li><a href="https://github.com/sebdah/scrapy-mongodb/issues/6">#6 ScrapyDeprecationWarning: crawler.settings</a></li>
+<li><a href="https://github.com/sebdah/scrapy-mongodb/issues/7">#7 Use Python format() for output</a></li>
+<li><a href="https://github.com/sebdah/scrapy-mongodb/issues/8">#8 Bug when upserting items with a unique key</a></li>
+</ul><p><strong>0.5.1 (2013-06-03)</strong></p>
+
+<ul>
+<li>Updated docstrings</li>
+</ul><p><strong>0.5.0 (2013-01-10)</strong></p>
 
 <ul>
 <li>Implemented feature <a href="https://github.com/sebdah/scrapy-mongodb/issues/5">#5 Add flag for setting timestamps in the database</a>
@@ -265,9 +275,31 @@ MONGODB_URI = 'mongodb://host1.example.com:27017,host2.example.com:27017,host3.e
 </ul><h2>
 <a name="instructions-to-release-project-to-pypi" class="anchor" href="#instructions-to-release-project-to-pypi"><span class="octicon octicon-link"></span></a>Instructions to release project to PyPi</h2>
 
-<pre><code>python setup.py register
-python setup.py sdist upload
+<pre><code>make release
 </code></pre>
+
+<h2>
+<a name="author" class="anchor" href="#author"><span class="octicon octicon-link"></span></a>Author</h2>
+
+<p>This project is maintained by <a href="http://www.sebastiandahlgren.se">Sebastian Dahlgren</a> (<a href="https://github.com/sebdah">GitHub</a> | <a href="https://twitter.com/sebdah">Twitter</a> | <a href="http://www.linkedin.com/in/sebastiandahlgren">LinkedIn</a>)</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>APACHE LICENSE 2.0
+Copyright 2013 Sebastian Dahlgren</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/sebdah">sebdah</a></p>
