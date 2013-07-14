@@ -189,6 +189,9 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.6.1 (2013-07-14)**
+- [#9 fix: item_buffer.append() takes exactly one argument (0 given)](https://github.com/sebdah/scrapy-mongodb/pull/9)
+
 **0.6.0 (2013-06-04)**
 - [#6 ScrapyDeprecationWarning: crawler.settings](https://github.com/sebdah/scrapy-mongodb/issues/6)
 - [#7 Use Python format() for output](https://github.com/sebdah/scrapy-mongodb/issues/7)
