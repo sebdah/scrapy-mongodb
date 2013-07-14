@@ -175,7 +175,7 @@ class MongoDBPipeline():
             if self.config['append_timestamp']:
                 item['scrapy-mongodb'] = { 'ts': datetime.datetime.utcnow() }
 
-            self.item_buffer.append()
+            self.item_buffer.append(item)
 
             if self.current_item == self.config['buffer']:
                 self.current_item = 0
