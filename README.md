@@ -189,6 +189,14 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.6.1 (2013-07-14)**
+- [#9 fix: item_buffer.append() takes exactly one argument (0 given)](https://github.com/sebdah/scrapy-mongodb/pull/9)
+
+**0.6.0 (2013-06-04)**
+- [#6 ScrapyDeprecationWarning: crawler.settings](https://github.com/sebdah/scrapy-mongodb/issues/6)
+- [#7 Use Python format() for output](https://github.com/sebdah/scrapy-mongodb/issues/7)
+- [#8 Bug when upserting items with a unique key](https://github.com/sebdah/scrapy-mongodb/issues/8)
+
 **0.5.1 (2013-06-03)**
 - Updated docstrings
 
@@ -215,5 +223,27 @@ Release information
 Instructions to release project to PyPi
 ---------------------------------------
 
-    python setup.py register
-    python setup.py sdist upload
+    make release
+
+Author
+------
+
+This project is maintained by [Sebastian Dahlgren](http://www.sebastiandahlgren.se) ([GitHub](https://github.com/sebdah) | [Twitter](https://twitter.com/sebdah) | [LinkedIn](http://www.linkedin.com/in/sebastiandahlgren))
+
+License
+-------
+
+APACHE LICENSE 2.0
+Copyright 2013 Sebastian Dahlgren
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
