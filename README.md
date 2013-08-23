@@ -189,6 +189,9 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.6.2 (2013-08-23)**
+- [#10 get_project_settings precludes configuring settings on command line](https://github.com/sebdah/scrapy-mongodb/pull/10)
+
 **0.6.1 (2013-07-14)**
 - [#9 fix: item_buffer.append() takes exactly one argument (0 given)](https://github.com/sebdah/scrapy-mongodb/pull/9)
 
