@@ -27,9 +27,7 @@ from pymongo.mongo_replica_set_client import MongoReplicaSetClient
 from pymongo.read_preferences import ReadPreference
 
 from scrapy import log
-from scrapy.utils.project import get_project_settings
 
-SETTINGS = get_project_settings()
 
 VERSION = '0.6.1'
 
@@ -65,8 +63,14 @@ class MongoDBPipeline():
     current_item = 0
     item_buffer = []
 
-    def __init__(self):
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler.settings)
+
+    def __init__(self, settings):
         """ Constructor """
+        self.settings = settings
+
         # Configure the connection
         self.configure()
 
@@ -101,24 +105,24 @@ class MongoDBPipeline():
     def configure(self):
         """ Configure the MongoDB connection """
         # Handle deprecated configuration
-        if not not_set(SETTINGS['MONGODB_HOST']):
+        if not not_set(self.settings['MONGODB_HOST']):
             log.msg(
                 'DeprecationWarning: MONGODB_HOST is deprecated',
                 level=log.WARNING)
-            mongodb_host = SETTINGS['MONGODB_HOST']
+            mongodb_host = self.settings['MONGODB_HOST']
 
-            if not not_set(SETTINGS['MONGODB_PORT']):
+            if not not_set(self.settings['MONGODB_PORT']):
                 log.msg(
                     'DeprecationWarning: MONGODB_PORT is deprecated',
                     level=log.WARNING)
                 self.config['uri'] = 'mongodb://{0}:{1:i}'.format(
                     mongodb_host,
-                    SETTINGS['MONGODB_PORT'])
+                    self.settings['MONGODB_PORT'])
             else:
                 self.config['uri'] = 'mongodb://{0}:27017'.format(mongodb_host)
 
-        if not not_set(SETTINGS['MONGODB_REPLICA_SET']):
-            if not not_set(SETTINGS['MONGODB_REPLICA_SET_HOSTS']):
+        if not not_set(self.settings['MONGODB_REPLICA_SET']):
+            if not not_set(self.settings['MONGODB_REPLICA_SET_HOSTS']):
                 log.msg(
                     (
                         'DeprecationWarning: '
@@ -126,7 +130,7 @@ class MongoDBPipeline():
                     ),
                     level=log.WARNING)
                 self.config['uri'] = 'mongodb://{0}'.format(
-                    SETTINGS['MONGODB_REPLICA_SET_HOSTS'])
+                    self.settings['MONGODB_REPLICA_SET_HOSTS'])
 
         # Set all regular options
         options = [
@@ -142,8 +146,8 @@ class MongoDBPipeline():
         ]
 
         for key, setting in options:
-            if not not_set(SETTINGS[setting]):
-                self.config[key] = SETTINGS[setting]
+            if not not_set(self.settings[setting]):
+                self.config[key] = self.settings[setting]
 
         # Check for illegal configuration
         if self.config['buffer'] and self.config['unique_key']:
@@ -222,9 +226,3 @@ class MongoDBPipeline():
             spider=spider)
 
         return item
-
-    @classmethod
-    def from_crawler(cls, crawler):
-        obj = cls()
-        obj.crawler = crawler
-        return obj
