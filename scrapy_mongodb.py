@@ -27,7 +27,6 @@ from pymongo.mongo_replica_set_client import MongoReplicaSetClient
 from pymongo.read_preferences import ReadPreference
 
 from scrapy import log
-from scrapy.conf import settings
 
 
 def not_set(string):
@@ -61,8 +60,14 @@ class MongoDBPipeline():
     current_item = 0
     item_buffer = []
 
-    def __init__(self):
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler.settings)
+
+    def __init__(self, settings):
         """ Constructor """
+        self.settings = settings
+
         # Configure the connection
         self.configure()
 
@@ -96,26 +101,26 @@ class MongoDBPipeline():
     def configure(self):
         """ Configure the MongoDB connection """
         # Handle deprecated configuration
-        if not not_set(settings['MONGODB_HOST']):
+        if not not_set(self.settings['MONGODB_HOST']):
             log.msg('DeprecationWarning: MONGODB_HOST is deprecated',
                 level=log.WARNING)
-            mongodb_host = settings['MONGODB_HOST']
+            mongodb_host = self.settings['MONGODB_HOST']
 
-            if not not_set(settings['MONGODB_PORT']):
+            if not not_set(self.settings['MONGODB_PORT']):
                 log.msg('DeprecationWarning: MONGODB_PORT is deprecated',
                     level=log.WARNING)
                 self.config['uri'] = 'mongodb://%s:%i' % (
-                    mongodb_host, settings['MONGODB_PORT'])
+                    mongodb_host, self.settings['MONGODB_PORT'])
             else:
                 self.config['uri'] = 'mongodb://%s:27017' % mongodb_host
 
-        if not not_set(settings['MONGODB_REPLICA_SET']):
-            if not not_set(settings['MONGODB_REPLICA_SET_HOSTS']):
+        if not not_set(self.settings['MONGODB_REPLICA_SET']):
+            if not not_set(self.settings['MONGODB_REPLICA_SET_HOSTS']):
                 log.msg(
                     'DeprecationWarning: MONGODB_REPLICA_SET_HOSTS is deprecated',
                     level=log.WARNING)
                 self.config['uri'] = 'mongodb://%s' % (
-                    settings['MONGODB_REPLICA_SET_HOSTS'])
+                    self.settings['MONGODB_REPLICA_SET_HOSTS'])
 
         # Set all regular options
         options = [
@@ -131,8 +136,9 @@ class MongoDBPipeline():
         ]
 
         for key, setting in options:
-            if not not_set(settings[setting]):
-                self.config[key] = settings[setting]
+            if not not_set(self.settings[setting]):
+                self.config[key] = self.settings[setting]
+
 
         # Check for illegal configuration
         if self.config['buffer'] and self.config['unique_key']:
