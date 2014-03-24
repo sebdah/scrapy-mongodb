@@ -190,6 +190,16 @@ class MongoDBPipeline():
 
         return self.insert_item(item, spider)
 
+    def close_spider(self, spider):
+        """ Method called when the spider is closed
+
+        :type spider: BaseSpider object
+        :param spider: The spider running the queries
+        :returns: None
+        """
+        if self.item_buffer:
+            self.insert_item(self.item_buffer, spider)
+
     def insert_item(self, item, spider):
         """ Process the item and add it to MongoDB
 
