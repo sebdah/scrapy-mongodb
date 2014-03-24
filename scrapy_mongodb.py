@@ -177,7 +177,7 @@ class MongoDBPipeline():
             item = dict(item)
 
             if self.config['append_timestamp']:
-                item['scrapy-mongodb'] = { 'ts': datetime.datetime.utcnow() }
+                item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
 
             self.item_buffer.append(item)
 
@@ -203,7 +203,7 @@ class MongoDBPipeline():
             item = dict(item)
 
             if self.config['append_timestamp']:
-                item['scrapy-mongodb'] = { 'ts': datetime.datetime.utcnow() }
+                item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
 
         if self.config['unique_key'] is None:
             try:
