@@ -3,7 +3,8 @@ Setup script for PyPi
 """
 
 from distutils.core import setup
-setup(name='scrapy-mongodb',
+setup(
+    name='scrapy-mongodb',
     version='0.6.2',
     license='Apache License, Version 2.0',
     description='Pipeline to MongoDB for Scrapy. Supports MongoDB replica sets',
