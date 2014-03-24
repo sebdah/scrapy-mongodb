@@ -29,7 +29,7 @@ from pymongo.read_preferences import ReadPreference
 from scrapy import log
 
 
-VERSION = '0.6.2'
+VERSION = '0.6.3'
 
 
 def not_set(string):
@@ -177,7 +177,7 @@ class MongoDBPipeline():
             item = dict(item)
 
             if self.config['append_timestamp']:
-                item['scrapy-mongodb'] = { 'ts': datetime.datetime.utcnow() }
+                item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
 
             self.item_buffer.append(item)
 
@@ -189,6 +189,16 @@ class MongoDBPipeline():
                 return item
 
         return self.insert_item(item, spider)
+
+    def close_spider(self, spider):
+        """ Method called when the spider is closed
+
+        :type spider: BaseSpider object
+        :param spider: The spider running the queries
+        :returns: None
+        """
+        if self.item_buffer:
+            self.insert_item(self.item_buffer, spider)
 
     def insert_item(self, item, spider):
         """ Process the item and add it to MongoDB
@@ -203,7 +213,7 @@ class MongoDBPipeline():
             item = dict(item)
 
             if self.config['append_timestamp']:
-                item['scrapy-mongodb'] = { 'ts': datetime.datetime.utcnow() }
+                item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
 
         if self.config['unique_key'] is None:
             try:

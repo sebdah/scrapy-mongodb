@@ -189,6 +189,9 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.6.3 (2014-03-24)**
+- Syncing all items not previously synced from the local buffer to MongoDB when the spider finishes
+
 **0.6.2 (2013-08-23)**
 - [#10 get_project_settings precludes configuring settings on command line](https://github.com/sebdah/scrapy-mongodb/pull/10)
 
