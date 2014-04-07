@@ -28,8 +28,7 @@ from pymongo.read_preferences import ReadPreference
 
 from scrapy import log
 
-
-VERSION = '0.6.3'
+VERSION = '0.6.4'
 
 
 def not_set(string):
@@ -57,19 +56,25 @@ class MongoDBPipeline():
         'unique_key': None,
         'buffer': None,
         'append_timestamp': False,
+        'stop_on_duplicate': 0,
     }
 
     # Item buffer
     current_item = 0
     item_buffer = []
 
+    # Duplicate key occurence count
+    duplicate_key_count = 0
+
     @classmethod
     def from_crawler(cls, crawler):
-        return cls(crawler.settings)
+        return cls(crawler)
 
-    def __init__(self, settings):
+    def __init__(self, crawler):
         """ Constructor """
-        self.settings = settings
+        self.settings = crawler.settings
+
+        self.crawler = crawler
 
         # Configure the connection
         self.configure()
@@ -101,6 +106,27 @@ class MongoDBPipeline():
             self.collection.ensure_index(self.config['unique_key'], unique=True)
             log.msg('Ensuring index for key {0}'.format(
                 self.config['unique_key']))
+
+        # Get the duplicate on key option
+        if self.config['stop_on_duplicate']:
+            tmpValue = self.config['stop_on_duplicate']
+            if tmpValue < 0:
+                log.msg(
+                    (
+                       'Negative values are not allowed for'
+                       ' MONGODB_STOP_ON_DUPLICATE option.'
+                    ),
+                    level=log.ERROR
+                )
+                raise SyntaxError(
+                    (
+                        'Negative values are not allowed for'
+                        ' MONGODB_STOP_ON_DUPLICATE option.'
+                    )
+                )
+            self.stop_on_duplicate=self.config['stop_on_duplicate']
+        else:
+            self.stop_on_duplicate = 0
 
     def configure(self):
         """ Configure the MongoDB connection """
@@ -143,6 +169,7 @@ class MongoDBPipeline():
             ('unique_key', 'MONGODB_UNIQUE_KEY'),
             ('buffer', 'MONGODB_BUFFER_DATA'),
             ('append_timestamp', 'MONGODB_ADD_TIMESTAMP'),
+            ('stop_on_duplicate', 'MONGODB_STOP_ON_DUPLICATE')
         ]
 
         for key, setting in options:
@@ -219,6 +246,15 @@ class MongoDBPipeline():
             try:
                 self.collection.insert(item, continue_on_error=True)
             except errors.DuplicateKeyError:
+                log.msg('Duplicate key found', level=log.DEBUG)
+                if (self.stop_on_duplicate > 0):
+                    self.duplicate_key_count += 1
+                    if (self.duplicate_key_count >= self.stop_on_duplicate):
+                        self.crawler.engine.close_spider(
+                            spider,
+                            'Number of duplicate key insertion exceeded'
+                        )
+
                 pass
 
         else:
