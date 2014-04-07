@@ -199,6 +199,9 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.6.4 (2014-04-07)**
+- Add the MONGODB_STOP_ON_DUPLICATE option which allows to close the spider when a certain amount of duplicated insertion threshold is reached.
+
 **0.6.3 (2014-03-24)**
 - Syncing all items not previously synced from the local buffer to MongoDB when the spider finishes
 
