@@ -150,6 +150,16 @@ Configuration options available. Put these in your `settings.py` file.
             Write operations will block until they have been replicated to the specified number or tagged set of servers. w=<int> always includes the replica set primary (e.g. w=3 means write to the primary and wait until replicated to two secondaries). Passing w=0 disables write acknowledgement and all other write concern options.
         </td>
     </tr>
+    <tr>
+        <td>MONGODB_STOP_ON_DUPLICATE</td>
+        <td>0</td>
+        <td>No</td>
+        <td>
+            Set this to a value greater than zero to close the spider when a specific number of duplicated insertions in mongodb are detected.<br/>
+            If set to zero, this option has no effect.<br/>
+            If set to something greater than zero, say N, the spider is closed when N duplicated insertions are detected during the crawling.
+        </td>
+    </tr>
 </table>
 
 1. [http://docs.mongodb.org/manual/reference/connection-string/](http://docs.mongodb.org/manual/reference/connection-string/)
