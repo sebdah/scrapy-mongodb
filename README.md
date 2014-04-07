@@ -150,6 +150,16 @@ Configuration options available. Put these in your `settings.py` file.
             Write operations will block until they have been replicated to the specified number or tagged set of servers. w=<int> always includes the replica set primary (e.g. w=3 means write to the primary and wait until replicated to two secondaries). Passing w=0 disables write acknowledgement and all other write concern options.
         </td>
     </tr>
+    <tr>
+        <td>MONGODB_STOP_ON_DUPLICATE</td>
+        <td>0</td>
+        <td>No</td>
+        <td>
+            Set this to a value greater than zero to close the spider when a specific number of duplicated insertions in mongodb are detected.<br/>
+            If set to zero, this option has no effect.<br/>
+            If set to something greater than zero, say N, the spider is closed when N duplicated insertions are detected during the crawling.
+        </td>
+    </tr>
 </table>
 
 1. [http://docs.mongodb.org/manual/reference/connection-string/](http://docs.mongodb.org/manual/reference/connection-string/)
@@ -189,6 +199,12 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.7.0 (2013-04-07)**
+- [#13 Add option to allow closing the spider upon duplicate insertion in mongodb](https://github.com/sebdah/scrapy-mongodb/pull/13)
+
+**0.6.4 (2014-04-07)**
+- Add the MONGODB_STOP_ON_DUPLICATE option which allows to close the spider when a certain amount of duplicated insertion threshold is reached.
+
 **0.6.3 (2014-03-24)**
 - Syncing all items not previously synced from the local buffer to MongoDB when the spider finishes
 
