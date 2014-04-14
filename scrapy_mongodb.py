@@ -28,7 +28,7 @@ from pymongo.read_preferences import ReadPreference
 
 from scrapy import log
 
-VERSION = '0.7.0'
+VERSION = '0.7.1'
 
 
 def not_set(string):
@@ -113,8 +113,8 @@ class MongoDBPipeline():
             if tmpValue < 0:
                 log.msg(
                     (
-                       'Negative values are not allowed for'
-                       ' MONGODB_STOP_ON_DUPLICATE option.'
+                        'Negative values are not allowed for'
+                        ' MONGODB_STOP_ON_DUPLICATE option.'
                     ),
                     level=log.ERROR
                 )
@@ -124,7 +124,7 @@ class MongoDBPipeline():
                         ' MONGODB_STOP_ON_DUPLICATE option.'
                     )
                 )
-            self.stop_on_duplicate=self.config['stop_on_duplicate']
+            self.stop_on_duplicate = self.config['stop_on_duplicate']
         else:
             self.stop_on_duplicate = 0
 
@@ -245,6 +245,11 @@ class MongoDBPipeline():
         if self.config['unique_key'] is None:
             try:
                 self.collection.insert(item, continue_on_error=True)
+                log.msg(
+                    'Stored item(s) in MongoDB {0}/{1}'.format(
+                        self.config['database'], self.config['collection']),
+                    level=log.DEBUG,
+                    spider=spider)
             except errors.DuplicateKeyError:
                 log.msg('Duplicate key found', level=log.DEBUG)
                 if (self.stop_on_duplicate > 0):
@@ -254,7 +259,6 @@ class MongoDBPipeline():
                             spider,
                             'Number of duplicate key insertion exceeded'
                         )
-
                 pass
 
         else:
@@ -265,10 +269,10 @@ class MongoDBPipeline():
                 item,
                 upsert=True)
 
-        log.msg(
-            'Stored item(s) in MongoDB {0}/{1}'.format(
-                self.config['database'], self.config['collection']),
-            level=log.DEBUG,
-            spider=spider)
+            log.msg(
+                'Stored item(s) in MongoDB {0}/{1}'.format(
+                    self.config['database'], self.config['collection']),
+                level=log.DEBUG,
+                spider=spider)
 
         return item
