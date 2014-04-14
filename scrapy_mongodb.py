@@ -113,8 +113,8 @@ class MongoDBPipeline():
             if tmpValue < 0:
                 log.msg(
                     (
-                       'Negative values are not allowed for'
-                       ' MONGODB_STOP_ON_DUPLICATE option.'
+                        'Negative values are not allowed for'
+                        ' MONGODB_STOP_ON_DUPLICATE option.'
                     ),
                     level=log.ERROR
                 )
@@ -124,7 +124,7 @@ class MongoDBPipeline():
                         ' MONGODB_STOP_ON_DUPLICATE option.'
                     )
                 )
-            self.stop_on_duplicate=self.config['stop_on_duplicate']
+            self.stop_on_duplicate = self.config['stop_on_duplicate']
         else:
             self.stop_on_duplicate = 0
 
