@@ -199,7 +199,10 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
-**0.7.0 (2013-04-07)**
+**0.7.1 (2014-04-14)**
+- Fixed bad log messages when duplicate keys were found
+
+**0.7.0 (2014-04-07)**
 - [#13 Add option to allow closing the spider upon duplicate insertion in mongodb](https://github.com/sebdah/scrapy-mongodb/pull/13)
 
 **0.6.4 (2014-04-07)**
