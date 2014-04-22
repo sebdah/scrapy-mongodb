@@ -56,7 +56,7 @@ class MongoDBPipeline():
         'unique_key': None,
         'buffer': None,
         'append_timestamp': False,
-        'timestamp_key': False,
+        'timestamp_key': None,
         'stop_on_duplicate': 0,
     }
 
@@ -206,7 +206,7 @@ class MongoDBPipeline():
             item = dict(item)
 
             if self.config['append_timestamp']:
-                if self.config['timestamp_key']:
+                if not not_set(self.config['timestamp_key']):
                     item[self.config['timestamp_key']] = datetime.datetime.utcnow()
                 else:
                     item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
@@ -245,7 +245,10 @@ class MongoDBPipeline():
             item = dict(item)
 
             if self.config['append_timestamp']:
-                item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
+                if not not_set(self.config['timestamp_key']):
+                    item[self.config['timestamp_key']] = datetime.datetime.utcnow()
+                else:
+                    item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
 
         if self.config['unique_key'] is None:
             try:
