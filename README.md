@@ -65,9 +65,7 @@ This will modify the document to look something like this:
         ...
     }
 
-The timestamp is in UTC.
-
-To change the format of the timestamp set a `MONGODB_TIMESTAMP_KEY` string value:
+The timestamp is in UTC. To change the key name for the timestamp, use `MONGODB_TIMESTAMP_KEY`:
 
     MONGODB_TIMESTAMP_KEY = 'created'
 
@@ -75,7 +73,7 @@ Will modify the document timestamp to look like this:
 
     {
         ...
-        'created': ISODate("2013-01-10T07:43:56.797Z"),
+        'created': ISODate("2013-01-10T07:43:56.797Z")
         ...
     }
 
