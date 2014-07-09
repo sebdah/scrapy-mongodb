@@ -21,14 +21,14 @@ limitations under the License.
 """
 import datetime
 
-from pymongo import errors
+from pymongo import errors, ASCENDING, DESCENDING
 from pymongo.mongo_client import MongoClient
 from pymongo.mongo_replica_set_client import MongoReplicaSetClient
 from pymongo.read_preferences import ReadPreference
 
 from scrapy import log
 
-VERSION = '0.7.1'
+VERSION = '0.8.0a1'
 
 
 def not_set(string):
@@ -56,7 +56,9 @@ class MongoDBPipeline():
         'unique_key': None,
         'buffer': None,
         'append_timestamp': False,
+        'append_spiderinfo': False,
         'stop_on_duplicate': 0,
+        'meta_field': 'scrapymongodb'
     }
 
     # Item buffer
@@ -73,7 +75,7 @@ class MongoDBPipeline():
     def __init__(self, crawler):
         """ Constructor """
         self.settings = crawler.settings
-
+        self.project = crawler.settings.get("PROJECT")
         self.crawler = crawler
 
         # Configure the connection
@@ -106,6 +108,15 @@ class MongoDBPipeline():
             self.collection.ensure_index(self.config['unique_key'], unique=True)
             log.msg('Ensuring index for key {0}'.format(
                 self.config['unique_key']))
+
+        #create index on spider info, if spiderinfo enabled
+        if self.config['append_spiderinfo']:
+            self.collection.ensure_index('%s.spider' % self.config['meta_field'])
+            self.collection.ensure_index('%s.project' % self.config['meta_field'])
+            self.collection.ensure_index([('%s.spider' % self.config['meta_field'], ASCENDING),
+                                          ('%s.project' % self.config['meta_field'], ASCENDING)])
+
+            log.msg('Ensuring index for key spider info')
 
         # Get the duplicate on key option
         if self.config['stop_on_duplicate']:
@@ -169,6 +180,7 @@ class MongoDBPipeline():
             ('unique_key', 'MONGODB_UNIQUE_KEY'),
             ('buffer', 'MONGODB_BUFFER_DATA'),
             ('append_timestamp', 'MONGODB_ADD_TIMESTAMP'),
+            ('append_spiderinfo', 'MONGODB_ADD_SPIDERINFO'),
             ('stop_on_duplicate', 'MONGODB_STOP_ON_DUPLICATE')
         ]
 
@@ -203,8 +215,9 @@ class MongoDBPipeline():
             self.current_item += 1
             item = dict(item)
 
-            if self.config['append_timestamp']:
-                item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
+            meta = self._createmetadata(spider)
+            if meta is not None:
+                item[self.config['meta_field']] = meta
 
             self.item_buffer.append(item)
 
@@ -239,8 +252,9 @@ class MongoDBPipeline():
         if not isinstance(item, list):
             item = dict(item)
 
-            if self.config['append_timestamp']:
-                item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
+            meta = self._createmetadata(spider)
+            if meta is not None:
+                item[self.config['meta_field']] = meta
 
         if self.config['unique_key'] is None:
             try:
@@ -276,3 +290,24 @@ class MongoDBPipeline():
                 spider=spider)
 
         return item
+
+    def _createmetadata(self, spider):
+        """ Create metadata dict
+        :type spider: BaseSpider object
+        :returns: dict object or None
+        """
+        scrapymongodb = dict()
+
+        if self.config['append_timestamp']:
+            scrapymongodb['ts'] = datetime.datetime.utcnow()
+
+        if self.config['append_spiderinfo']:
+            if spider.name is not None:
+                scrapymongodb['spider'] = spider.name
+            if self.project is not None:
+                scrapymongodb['project'] = self.project
+
+        if len(scrapymongodb) is not 0:
+            return scrapymongodb
+        else:
+            return None
