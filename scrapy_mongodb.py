@@ -58,6 +58,7 @@ class MongoDBPipeline():
         'append_timestamp': False,
         'append_spiderinfo': False,
         'stop_on_duplicate': 0,
+        'meta_field': 'scrapymongodb'
     }
 
     # Item buffer
@@ -110,10 +111,11 @@ class MongoDBPipeline():
 
         #create index on spider info, if spiderinfo enabled
         if self.config['append_spiderinfo']:
-            self.collection.ensure_index('scrapy-mongodb.spider')
-            self.collection.ensure_index('scrapy-mongodb.project')
-            self.collection.ensure_index([("scrapy-mongodb.spider", ASCENDING),
-                                          ("scrapy-mongodb.project", ASCENDING)])
+            self.collection.ensure_index('%s.spider' % self.config['meta_field'])
+            self.collection.ensure_index('%s.project' % self.config['meta_field'])
+            self.collection.ensure_index([('%s.spider' % self.config['meta_field'], ASCENDING),
+                                          ('%s.project' % self.config['meta_field'], ASCENDING)])
+
             log.msg('Ensuring index for key spider info')
 
         # Get the duplicate on key option
@@ -213,8 +215,9 @@ class MongoDBPipeline():
             self.current_item += 1
             item = dict(item)
 
-            if self.config['append_timestamp']:
-                item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
+            meta = self._createmetadata(spider)
+            if meta is not None:
+                item[self.config['meta_field']] = meta
 
             self.item_buffer.append(item)
 
@@ -249,19 +252,9 @@ class MongoDBPipeline():
         if not isinstance(item, list):
             item = dict(item)
 
-            scrapymongodb = dict()
-
-            if self.config['append_timestamp']:
-                scrapymongodb['ts'] = datetime.datetime.utcnow()
-
-            if self.config['append_spiderinfo']:
-                if spider.name is not None:
-                    scrapymongodb['spider'] = spider.name
-                if self.project is not None:
-                    scrapymongodb['project'] = self.project
-
-            if len(scrapymongodb) is not 0:
-                item['scrapy-mongodb'] = dict(scrapymongodb)
+            meta = self._createmetadata(spider)
+            if meta is not None:
+                item[self.config['meta_field']] = meta
 
         if self.config['unique_key'] is None:
             try:
@@ -297,3 +290,24 @@ class MongoDBPipeline():
                 spider=spider)
 
         return item
+
+    def _createmetadata(self, spider):
+        """ Create metadata dict
+        :type spider: BaseSpider object
+        :returns: dict object or None
+        """
+        scrapymongodb = dict()
+
+        if self.config['append_timestamp']:
+            scrapymongodb['ts'] = datetime.datetime.utcnow()
+
+        if self.config['append_spiderinfo']:
+            if spider.name is not None:
+                scrapymongodb['spider'] = spider.name
+            if self.project is not None:
+                scrapymongodb['project'] = self.project
+
+        if len(scrapymongodb) is not 0:
+            return scrapymongodb
+        else:
+            return None
