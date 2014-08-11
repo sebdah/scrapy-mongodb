@@ -262,12 +262,14 @@ class MongoDBPipeline():
                 pass
 
         else:
-            self.collection.update(
-                {
-                    self.config['unique_key']: item[self.config['unique_key']]
-                },
-                item,
-                upsert=True)
+            key = {}
+            if isinstance(self.config['unique_key'], list):
+                for k in dict(self.config['unique_key']).keys():
+                    key[k] = item[k]
+            else:
+                key[self.config['unique_key']] = item[self.config['unique_key']]
+
+            self.collection.update(key, item, upsert=True)
 
             log.msg(
                 'Stored item(s) in MongoDB {0}/{1}'.format(
