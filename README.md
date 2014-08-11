@@ -199,6 +199,9 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.7.2 (2014-08-11)**
+- [#18 Enable multiple value index for collection](https://github.com/sebdah/scrapy-mongodb/pull/18). Thanks [@sherzberg](https://github.com/sherzberg) for the pull request
+
 **0.7.1 (2014-04-14)**
 - Fixed bad log messages when duplicate keys were found
 
