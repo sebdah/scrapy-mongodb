@@ -28,7 +28,7 @@ from pymongo.read_preferences import ReadPreference
 
 from scrapy import log
 
-VERSION = '0.7.3'
+VERSION = '0.8.0a1'
 
 
 def not_set(string):
