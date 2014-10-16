@@ -43,7 +43,7 @@ def not_set(string):
     return False
 
 
-class MongoDBPipeline():
+class MongoDBPipeline(object):
     """ MongoDB pipeline class """
     # Default options
     config = {
