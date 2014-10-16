@@ -28,7 +28,7 @@ from pymongo.read_preferences import ReadPreference
 
 from scrapy import log
 
-VERSION = '0.7.2'
+VERSION = '0.7.3'
 
 
 def not_set(string):
@@ -43,7 +43,7 @@ def not_set(string):
     return False
 
 
-class MongoDBPipeline():
+class MongoDBPipeline(object):
     """ MongoDB pipeline class """
     # Default options
     config = {
