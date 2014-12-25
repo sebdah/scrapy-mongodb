@@ -201,8 +201,7 @@ class MongoDBPipeline(BaseItemExporter):
         :param spider: The spider running the queries
         :returns: Item object
         """
-        rs = self._get_serialized_fields(item)
-        item = dict(rs)
+        item = dict(self._get_serialized_fields(item))
 
         if self.config['buffer']:
             self.current_item += 1
