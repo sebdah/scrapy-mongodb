@@ -199,6 +199,9 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.8.0 (2014-12-25)**
+- [#22 Call serializer before inserting](https://github.com/sebdah/scrapy-mongodb/issue/22). Thanks [@italomaia](https://github.com/italomaia) for the pull request
+
 **0.7.2 (2014-08-11)**
 - [#18 Enable multiple value index for collection](https://github.com/sebdah/scrapy-mongodb/pull/18). Thanks [@sherzberg](https://github.com/sherzberg) for the pull request
 
