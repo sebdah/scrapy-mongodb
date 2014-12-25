@@ -203,10 +203,10 @@ class MongoDBPipeline(BaseItemExporter):
         """
         rs = self._get_serialized_fields(item)
         item = dict(rs)
-        
+
         if self.config['buffer']:
             self.current_item += 1
-            
+
             if self.config['append_timestamp']:
                 item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
 
