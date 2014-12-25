@@ -27,8 +27,9 @@ from pymongo.mongo_replica_set_client import MongoReplicaSetClient
 from pymongo.read_preferences import ReadPreference
 
 from scrapy import log
+from scrapy.contrib.exporter import BaseItemExporter
 
-VERSION = '0.7.3'
+VERSION = '0.8.0'
 
 
 def not_set(string):
@@ -43,7 +44,7 @@ def not_set(string):
     return False
 
 
-class MongoDBPipeline(object):
+class MongoDBPipeline(BaseItemExporter):
     """ MongoDB pipeline class """
     # Default options
     config = {
@@ -72,6 +73,7 @@ class MongoDBPipeline(object):
 
     def __init__(self, crawler):
         """ Constructor """
+        super(MongoDBPipeline, self).__init__()
         self.settings = crawler.settings
 
         self.crawler = crawler
@@ -199,9 +201,10 @@ class MongoDBPipeline(object):
         :param spider: The spider running the queries
         :returns: Item object
         """
+        item = dict(self._get_serialized_fields(item))
+
         if self.config['buffer']:
             self.current_item += 1
-            item = dict(item)
 
             if self.config['append_timestamp']:
                 item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
