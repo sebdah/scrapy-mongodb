@@ -1,3 +1,4 @@
+# coding:utf-8
 """
 scrapy-mongodb - MongoDB pipeline for Scrapy
 
