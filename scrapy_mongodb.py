@@ -99,7 +99,7 @@ class MongoDBPipeline(BaseItemExporter):
         # Set up the collection
         database = connection[self.config['database']]
         self.collection = database[self.config['collection']]
-        log.msg('Connected to MongoDB {0}, using "{1}/{2}"'.format(
+        log.msg(u'Connected to MongoDB {0}, using "{1}/{2}"'.format(
             self.config['uri'],
             self.config['database'],
             self.config['collection']))
