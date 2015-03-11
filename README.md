@@ -199,6 +199,9 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.8.2 (2015-03-1)**
+- [#26 Unicode log message](https://github.com/sebdah/scrapy-mongodb/issue/26). Thanks [@italomaia](https://github.com/italomaia) for the pull request
+
 **0.8.1 (2015-03-05)**
 - [#25 Add unicode shebang](https://github.com/sebdah/scrapy-mongodb/pull/25). Thanks [@italomaia](https://github.com/italomaia) for the pull request
 
