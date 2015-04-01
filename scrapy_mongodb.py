@@ -68,16 +68,16 @@ class MongoDBPipeline(BaseItemExporter):
     # Duplicate key occurence count
     duplicate_key_count = 0
 
-    @classmethod
-    def from_crawler(cls, crawler):
-        return cls(crawler)
+    def load_spider(self, spider):
+        self.crawler = spider.crawler
+        self.settings = spider.settings
 
-    def __init__(self, crawler):
-        """ Constructor """
-        super(MongoDBPipeline, self).__init__()
-        self.settings = crawler.settings
+        # Versions prior to 0.25
+        if not getattr(spider, 'update_settings', False):
+            self.settings.setdict(spider.custom_settings or {}, priority='project')
 
-        self.crawler = crawler
+    def open_spider(self, spider):
+        self.load_spider(spider)
 
         # Configure the connection
         self.configure()
