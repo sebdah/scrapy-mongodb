@@ -73,7 +73,7 @@ class MongoDBPipeline(BaseItemExporter):
         self.settings = spider.settings
 
         # Versions prior to 0.25
-        if not getattr(spider, 'update_settings', False):
+        if not hasattr(spider, 'update_settings') and hasattr(spider, 'custom_settings'):
             self.settings.setdict(spider.custom_settings or {}, priority='project')
 
     def open_spider(self, spider):
