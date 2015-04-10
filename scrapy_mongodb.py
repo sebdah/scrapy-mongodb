@@ -30,7 +30,7 @@ from pymongo.read_preferences import ReadPreference
 from scrapy import log
 from scrapy.contrib.exporter import BaseItemExporter
 
-VERSION = '0.8.2'
+VERSION = '0.9.0'
 
 
 def not_set(string):
@@ -68,16 +68,16 @@ class MongoDBPipeline(BaseItemExporter):
     # Duplicate key occurence count
     duplicate_key_count = 0
 
-    @classmethod
-    def from_crawler(cls, crawler):
-        return cls(crawler)
+    def load_spider(self, spider):
+        self.crawler = spider.crawler
+        self.settings = spider.settings
 
-    def __init__(self, crawler):
-        """ Constructor """
-        super(MongoDBPipeline, self).__init__()
-        self.settings = crawler.settings
+        # Versions prior to 0.25
+        if not hasattr(spider, 'update_settings') and hasattr(spider, 'custom_settings'):
+            self.settings.setdict(spider.custom_settings or {}, priority='project')
 
-        self.crawler = crawler
+    def open_spider(self, spider):
+        self.load_spider(spider)
 
         # Configure the connection
         self.configure()
