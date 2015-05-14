@@ -98,11 +98,13 @@ class MongoDBPipeline(BaseItemExporter):
 
         # Set up the collection
         database = connection[self.config['database']]
-        self.collection = database[self.config['collection']]
+
+        self.collection = database[self.config['collection']]\
+            if self.config['spider_name'] else database[spider.name]
         log.msg(u'Connected to MongoDB {0}, using "{1}/{2}"'.format(
             self.config['uri'],
             self.config['database'],
-            self.config['collection']))
+            spider.name))
 
         # Ensure unique index
         if self.config['unique_key']:
@@ -193,6 +195,10 @@ class MongoDBPipeline(BaseItemExporter):
                     u'and MONGODB_UNIQUE_KEY is not supported'
                 ))
 
+        # configure collections names peer spider
+        self.config['spider_name'] = True\
+            if not not_set(self.settings['MONGODB_SPIDER_NAME']) else False
+
     def process_item(self, item, spider):
         """ Process the item and add it to MongoDB
 
@@ -251,7 +257,7 @@ class MongoDBPipeline(BaseItemExporter):
                 self.collection.insert(item, continue_on_error=True)
                 log.msg(
                     u'Stored item(s) in MongoDB {0}/{1}'.format(
-                        self.config['database'], self.config['collection']),
+                        self.config['database'], spider.name),
                     level=log.DEBUG,
                     spider=spider)
             except errors.DuplicateKeyError:
@@ -277,7 +283,7 @@ class MongoDBPipeline(BaseItemExporter):
 
             log.msg(
                 u'Stored item(s) in MongoDB {0}/{1}'.format(
-                    self.config['database'], self.config['collection']),
+                    self.config['database'], spider.name),
                 level=log.DEBUG,
                 spider=spider)
 
