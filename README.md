@@ -67,6 +67,18 @@ This will modify the document to look something like this:
 
 The timestamp is in UTC.
 
+To change the format of the timestamp set a `MONGODB_TIMESTAMP_KEY` string value:
+
+    MONGODB_TIMESTAMP_KEY = 'created'
+
+Will modify the document timestamp to look like this:
+
+    {
+        ...
+        'created': ISODate("2013-01-10T07:43:56.797Z"),
+        ...
+    }
+
 Full list of config options
 ---------------------------
 Configuration options available. Put these in your `settings.py` file.
@@ -123,6 +135,15 @@ Configuration options available. Put these in your `settings.py` file.
         <td>
             If this is set to True, scrapy-mongodb will add a timestamp key to the documents. The document will look like this:<br />
             { scrapy_mongo: { ts: ISODate("2013-01-10T07:43:56.797Z") } }
+        </td>
+    </tr>
+    <tr>
+        <td>MONGODB_TIMESTAMP_KEY</td>
+        <td>None</td>
+        <td>No</td>
+        <td>
+            If this is set to a string, scrapy-mongodb will use this to change the key used for the timestamp. Example: `created` would look like:<br />
+            {'created' ISODate("2013-01-10T07:43:56.797Z") }
         </td>
     </tr>
     <tr>
