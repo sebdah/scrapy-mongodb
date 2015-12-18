@@ -107,7 +107,7 @@ class MongoDBPipeline(BaseItemExporter):
         # Ensure unique index
         if self.config['unique_key']:
             self.collection.ensure_index(self.config['unique_key'], unique=True)
-            log.msg('uEnsuring index for key {0}'.format(
+            log.msg(u'Ensuring index for key {0}'.format(
                 self.config['unique_key']))
 
         # Get the duplicate on key option
