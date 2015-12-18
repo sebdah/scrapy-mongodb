@@ -199,6 +199,9 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.9.1 (2015-12-18)**
+- Fix typo
+
 **0.9.0 (2015-04-10)**
 - [#28 Allow per-spider configuration](https://github.com/sebdah/scrapy-mongodb/pull/28). Thanks [@thiagof](https://github.com/thiagof) for the pull request
 
