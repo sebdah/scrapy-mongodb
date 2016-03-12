@@ -211,7 +211,10 @@ class MongoDBPipeline(BaseItemExporter):
 
             if self.current_item == self.config['buffer']:
                 self.current_item = 0
-                return self.insert_item(self.item_buffer, spider)
+                try:
+                    return self.insert_item(self.item_buffer, spider)
+                finally:
+                    self.item_buffer = []
 
             else:
                 return item
