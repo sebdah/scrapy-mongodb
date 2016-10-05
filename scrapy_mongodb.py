@@ -54,6 +54,7 @@ class MongoDBPipeline(BaseItemExporter):
         'write_concern': 0,
         'database': 'scrapy-mongodb',
         'collection': 'items',
+        'separate_collections': False,
         'replica_set': None,
         'unique_key': None,
         'buffer': None,
@@ -96,19 +97,14 @@ class MongoDBPipeline(BaseItemExporter):
                 fsync=self.config['fsync'],
                 read_preference=ReadPreference.PRIMARY)
 
-        # Set up the collection
-        database = connection[self.config['database']]
-        self.collection = database[self.config['collection']]
-        log.msg(u'Connected to MongoDB {0}, using "{1}/{2}"'.format(
-            self.config['uri'],
-            self.config['database'],
-            self.config['collection']))
+        # Set up the database
+        self.database = connection[self.config['database']]
+        self.collections = {'default': self.database[self.config['collection']]}
 
-        # Ensure unique index
-        if self.config['unique_key']:
-            self.collection.ensure_index(self.config['unique_key'], unique=True)
-            log.msg(u'Ensuring index for key {0}'.format(
-                self.config['unique_key']))
+        log.msg(u'Connected to MongoDB {0}, using "{1}"'.format(
+            self.config['uri'],
+            self.config['database']))
+
 
         # Get the duplicate on key option
         if self.config['stop_on_duplicate']:
@@ -168,6 +164,7 @@ class MongoDBPipeline(BaseItemExporter):
             ('write_concern', 'MONGODB_REPLICA_SET_W'),
             ('database', 'MONGODB_DATABASE'),
             ('collection', 'MONGODB_COLLECTION'),
+            ('separate_collections', 'MONGODB_SEPARATE_COLLECTIONS'),
             ('replica_set', 'MONGODB_REPLICA_SET'),
             ('unique_key', 'MONGODB_UNIQUE_KEY'),
             ('buffer', 'MONGODB_BUFFER_DATA'),
@@ -246,12 +243,14 @@ class MongoDBPipeline(BaseItemExporter):
             if self.config['append_timestamp']:
                 item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
 
+        collection_name, collection = self.get_collection(spider.name)
+
         if self.config['unique_key'] is None:
             try:
-                self.collection.insert(item, continue_on_error=True)
+                collection.insert(item, continue_on_error=True)
                 log.msg(
                     u'Stored item(s) in MongoDB {0}/{1}'.format(
-                        self.config['database'], self.config['collection']),
+                        self.config['database'], collection_name),
                     level=log.DEBUG,
                     spider=spider)
             except errors.DuplicateKeyError:
@@ -263,7 +262,6 @@ class MongoDBPipeline(BaseItemExporter):
                             spider,
                             'Number of duplicate key insertion exceeded'
                         )
-                pass
 
         else:
             key = {}
@@ -273,12 +271,31 @@ class MongoDBPipeline(BaseItemExporter):
             else:
                 key[self.config['unique_key']] = item[self.config['unique_key']]
 
-            self.collection.update(key, item, upsert=True)
+            collection.update(key, item, upsert=True)
 
             log.msg(
                 u'Stored item(s) in MongoDB {0}/{1}'.format(
-                    self.config['database'], self.config['collection']),
+                    self.config['database'], collection_name),
                 level=log.DEBUG,
                 spider=spider)
 
         return item
+
+
+    def get_collection(self, name):
+        if self.config['separate_collections']:
+            collection = self.collections.get(name)
+            collection_name = name
+            if not collection:
+                collection = self.database[name]
+                self.collections[name] = collection
+        else:
+            collection = self.collections.get('default')
+            collection_name = self.config['collection']
+
+        # Ensure unique index
+        if self.config['unique_key']:
+            collection.ensure_index(self.config['unique_key'], unique=True)
+            log.msg(u'Ensuring index for key {0}'.format(
+                self.config['unique_key']))
+        return (collection_name, collection)

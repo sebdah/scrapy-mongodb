@@ -67,6 +67,13 @@ This will modify the document to look something like this:
 
 The timestamp is in UTC.
 
+### Write to one collection per spider
+
+It's possible to write data to one collection per spider. To enable that
+feature, set this environment variable.
+
+    MONGODB_SEPARATE_COLLECTIONS = True
+
 Full list of config options
 ---------------------------
 Configuration options available. Put these in your `settings.py` file.
