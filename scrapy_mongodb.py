@@ -21,14 +21,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import datetime
+import logging
 
 from pymongo import errors
 from pymongo.mongo_client import MongoClient
 from pymongo.mongo_replica_set_client import MongoReplicaSetClient
 from pymongo.read_preferences import ReadPreference
 
-from scrapy import log
-from scrapy.contrib.exporter import BaseItemExporter
+from scrapy.exporters import BaseItemExporter
 
 VERSION = '0.9.1'
 
@@ -68,6 +68,10 @@ class MongoDBPipeline(BaseItemExporter):
     # Duplicate key occurence count
     duplicate_key_count = 0
 
+    def __init__(self, **kwargs):
+        super(MongoDBPipeline, self).__init__(**kwargs)
+        self.logger = logging.getLogger('scrapy')
+
     def load_spider(self, spider):
         self.crawler = spider.crawler
         self.settings = spider.settings
@@ -99,7 +103,7 @@ class MongoDBPipeline(BaseItemExporter):
         # Set up the collection
         database = connection[self.config['database']]
         self.collection = database[self.config['collection']]
-        log.msg(u'Connected to MongoDB {0}, using "{1}/{2}"'.format(
+        self.logger.info(u'Connected to MongoDB {0}, using "{1}/{2}"'.format(
             self.config['uri'],
             self.config['database'],
             self.config['collection']))
@@ -107,19 +111,16 @@ class MongoDBPipeline(BaseItemExporter):
         # Ensure unique index
         if self.config['unique_key']:
             self.collection.ensure_index(self.config['unique_key'], unique=True)
-            log.msg(u'Ensuring index for key {0}'.format(
+            self.logger.info(u'Ensuring index for key {0}'.format(
                 self.config['unique_key']))
 
         # Get the duplicate on key option
         if self.config['stop_on_duplicate']:
             tmpValue = self.config['stop_on_duplicate']
             if tmpValue < 0:
-                log.msg(
-                    (
-                        u'Negative values are not allowed for'
-                        u' MONGODB_STOP_ON_DUPLICATE option.'
-                    ),
-                    level=log.ERROR
+                self.logger.error(
+                    u'Negative values are not allowed for'
+                    u' MONGODB_STOP_ON_DUPLICATE option.'
                 )
                 raise SyntaxError(
                     (
@@ -135,15 +136,15 @@ class MongoDBPipeline(BaseItemExporter):
         """ Configure the MongoDB connection """
         # Handle deprecated configuration
         if not not_set(self.settings['MONGODB_HOST']):
-            log.msg(
+            self.logger.warning(
                 u'DeprecationWarning: MONGODB_HOST is deprecated',
-                level=log.WARNING)
+            )
             mongodb_host = self.settings['MONGODB_HOST']
 
             if not not_set(self.settings['MONGODB_PORT']):
-                log.msg(
+                self.logger.warning(
                     u'DeprecationWarning: MONGODB_PORT is deprecated',
-                    level=log.WARNING)
+                )
                 self.config['uri'] = 'mongodb://{0}:{1:i}'.format(
                     mongodb_host,
                     self.settings['MONGODB_PORT'])
@@ -152,12 +153,10 @@ class MongoDBPipeline(BaseItemExporter):
 
         if not not_set(self.settings['MONGODB_REPLICA_SET']):
             if not not_set(self.settings['MONGODB_REPLICA_SET_HOSTS']):
-                log.msg(
-                    (
-                        u'DeprecationWarning: '
-                        u'MONGODB_REPLICA_SET_HOSTS is deprecated'
-                    ),
-                    level=log.WARNING)
+                self.logger.warning(
+                    u'DeprecationWarning: '
+                    u'MONGODB_REPLICA_SET_HOSTS is deprecated'
+                )
                 self.config['uri'] = 'mongodb://{0}'.format(
                     self.settings['MONGODB_REPLICA_SET_HOSTS'])
 
@@ -181,12 +180,10 @@ class MongoDBPipeline(BaseItemExporter):
 
         # Check for illegal configuration
         if self.config['buffer'] and self.config['unique_key']:
-            log.msg(
-                (
-                    u'IllegalConfig: Settings both MONGODB_BUFFER_DATA '
-                    u'and MONGODB_UNIQUE_KEY is not supported'
-                ),
-                level=log.ERROR)
+            self.logger.error(
+                u'IllegalConfig: Settings both MONGODB_BUFFER_DATA '
+                u'and MONGODB_UNIQUE_KEY is not supported'
+            )
             raise SyntaxError(
                 (
                     u'IllegalConfig: Settings both MONGODB_BUFFER_DATA '
@@ -214,7 +211,10 @@ class MongoDBPipeline(BaseItemExporter):
 
             if self.current_item == self.config['buffer']:
                 self.current_item = 0
-                return self.insert_item(self.item_buffer, spider)
+                try:
+                    return self.insert_item(self.item_buffer, spider)
+                finally:
+                    self.item_buffer = []
 
             else:
                 return item
@@ -249,13 +249,12 @@ class MongoDBPipeline(BaseItemExporter):
         if self.config['unique_key'] is None:
             try:
                 self.collection.insert(item, continue_on_error=True)
-                log.msg(
+                self.logger.debug(
                     u'Stored item(s) in MongoDB {0}/{1}'.format(
-                        self.config['database'], self.config['collection']),
-                    level=log.DEBUG,
-                    spider=spider)
+                        self.config['database'], self.config['collection'])
+                )
             except errors.DuplicateKeyError:
-                log.msg(u'Duplicate key found', level=log.DEBUG)
+                self.logger.debug(u'Duplicate key found')
                 if (self.stop_on_duplicate > 0):
                     self.duplicate_key_count += 1
                     if (self.duplicate_key_count >= self.stop_on_duplicate):
@@ -275,10 +274,9 @@ class MongoDBPipeline(BaseItemExporter):
 
             self.collection.update(key, item, upsert=True)
 
-            log.msg(
+            self.logger.debug(
                 u'Stored item(s) in MongoDB {0}/{1}'.format(
-                    self.config['database'], self.config['collection']),
-                level=log.DEBUG,
-                spider=spider)
+                    self.config['database'], self.config['collection'])
+            )
 
         return item
