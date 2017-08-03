@@ -206,6 +206,11 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.10.0 (2017-08-03)**
+- Store items from different spiders in different collections [#36](https://github.com/sebdah/scrapy-mongodb/pull/36)
+- Fix a number of deprecation warnings [#34](https://github.com/sebdah/scrapy-mongodb/issues/34)
+- Update `scrapy` version to 1.4.0
+
 **0.9.1 (2015-12-18)**
 - Fix typo
 
