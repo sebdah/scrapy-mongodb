@@ -1,3 +1,4 @@
+[![PyPI version](https://badge.fury.io/py/scrapy-mongodb.svg)](https://badge.fury.io/py/scrapy-mongodb)
 <a href='https://travis-ci.org/sebdah/scrapy-mongodb'><img src='https://secure.travis-ci.org/sebdah/scrapy-mongodb.png?branch=master'></a>
 
 scrapy-mongodb
