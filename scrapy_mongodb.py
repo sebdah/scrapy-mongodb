@@ -29,8 +29,6 @@ from pymongo.read_preferences import ReadPreference
 
 from scrapy.exporters import BaseItemExporter
 
-VERSION = '0.9.1'
-
 
 def not_set(string):
     """ Check if a string is None or ''
