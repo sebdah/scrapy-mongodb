@@ -192,6 +192,8 @@ class MongoDBPipeline(BaseItemExporter):
         """
         item = dict(self._get_serialized_fields(item))
 
+        item = dict((k, v) for k, v in item.iteritems() if v is not None and v != "")
+
         if self.config['buffer']:
             self.current_item += 1
 
