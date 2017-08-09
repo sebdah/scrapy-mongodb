@@ -21,6 +21,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import datetime
+import logging
 
 from pymongo import errors
 from pymongo.mongo_client import MongoClient
@@ -192,6 +193,8 @@ class MongoDBPipeline(BaseItemExporter):
         """
         item = dict(self._get_serialized_fields(item))
 
+        item = dict((k, v) for k, v in item.iteritems() if v is not None and v != "")
+
         if self.config['buffer']:
             self.current_item += 1
 
@@ -202,7 +205,11 @@ class MongoDBPipeline(BaseItemExporter):
 
             if self.current_item == self.config['buffer']:
                 self.current_item = 0
-                return self.insert_item(self.item_buffer, spider)
+
+                try:
+                    return self.insert_item(self.item_buffer, spider)
+                finally:
+                    self.item_buffer = []
 
             return item
 
