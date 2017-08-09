@@ -207,6 +207,11 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.11.0 (2017-08-09)**
+- Do not store `None` or empty value objects in MongoDB [#39](https://github.com/sebdah/scrapy-mongodb/issues/39)
+- Fix memory leak [#38](https://github.com/sebdah/scrapy-mongodb/issues/38)
+- Fix bug in logging [#40](https://github.com/sebdah/scrapy-mongodb/issues/40)
+
 **0.10.0 (2017-08-03)**
 - Store items from different spiders in different collections [#36](https://github.com/sebdah/scrapy-mongodb/pull/36)
 - Fix a number of deprecation warnings [#34](https://github.com/sebdah/scrapy-mongodb/issues/34)
