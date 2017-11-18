@@ -15,7 +15,7 @@ setup(
     py_modules=['scrapy_mongodb'],
     platforms=['Any'],
     install_requires=[
-        'pymongo >= 2.4.1'
+        'pymongo >= 2.4.1', 'six'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
