@@ -207,6 +207,9 @@ Configuration options available. Put these in your `settings.py` file.
 
 Release information
 -------------------
+**0.12.0 (2018-01-08)**
+- Add Python 3 support [#42](https://github.com/sebdah/scrapy-mongodb/issues/42)
+
 **0.11.0 (2017-08-09)**
 - Do not store `None` or empty value objects in MongoDB [#39](https://github.com/sebdah/scrapy-mongodb/issues/39)
 - Fix memory leak [#38](https://github.com/sebdah/scrapy-mongodb/issues/38)
