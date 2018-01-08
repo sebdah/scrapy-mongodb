@@ -23,6 +23,7 @@ limitations under the License.
 import datetime
 import logging
 
+import six
 from pymongo import errors
 from pymongo.mongo_client import MongoClient
 from pymongo.mongo_replica_set_client import MongoReplicaSetClient
@@ -193,7 +194,7 @@ class MongoDBPipeline(BaseItemExporter):
         """
         item = dict(self._get_serialized_fields(item))
 
-        item = dict((k, v) for k, v in item.iteritems() if v is not None and v != "")
+        item = dict((k, v) for k, v in six.iteritems(item) if v is not None and v != "")
 
         if self.config['buffer']:
             self.current_item += 1
