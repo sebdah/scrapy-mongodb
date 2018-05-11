@@ -1,25 +1,3 @@
-# coding:utf-8
-"""
-scrapy-mongodb - MongoDB pipeline for Scrapy
-
-Homepage: https://github.com/sebdah/scrapy-mongodb
-Author: Sebastian Dahlgren <sebastian.dahlgren@gmail.com>
-License: Apache License 2.0 <http://www.apache.org/licenses/LICENSE-2.0.html>
-
-Copyright 2013 Sebastian Dahlgren
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
 import datetime
 import logging
 
@@ -33,7 +11,7 @@ from scrapy.exporters import BaseItemExporter
 
 
 def not_set(string):
-    """ Check if a string is None or ''
+    """Check if a string is None or ''.
 
     :returns: bool - True if the string is empty
     """
@@ -45,7 +23,8 @@ def not_set(string):
 
 
 class MongoDBPipeline(BaseItemExporter):
-    """ MongoDB pipeline class """
+    """MongoDB pipeline."""
+
     # Default options
     config = {
         'uri': 'mongodb://localhost:27017',
@@ -69,7 +48,7 @@ class MongoDBPipeline(BaseItemExporter):
     duplicate_key_count = 0
 
     def __init__(self, **kwargs):
-        """ Constructor """
+        """Constructor."""
         super(MongoDBPipeline, self).__init__(**kwargs)
         self.logger = logging.getLogger('scrapy-mongodb-pipeline')
 
@@ -109,7 +88,6 @@ class MongoDBPipeline(BaseItemExporter):
             self.config['uri'],
             self.config['database']))
 
-
         # Get the duplicate on key option
         if self.config['stop_on_duplicate']:
             tmpValue = self.config['stop_on_duplicate']
@@ -129,7 +107,7 @@ class MongoDBPipeline(BaseItemExporter):
             self.stop_on_duplicate = 0
 
     def configure(self):
-        """ Configure the MongoDB connection """
+        """Configure the MongoDB connection."""
         # Handle deprecated configuration
         if not not_set(self.settings['MONGODB_HOST']):
             self.logger.warning(
@@ -151,7 +129,7 @@ class MongoDBPipeline(BaseItemExporter):
                     (
                         u'DeprecationWarning: '
                         u'MONGODB_REPLICA_SET_HOSTS is deprecated'
-                   ))
+                    ))
                 self.config['uri'] = 'mongodb://{0}'.format(
                     self.settings['MONGODB_REPLICA_SET_HOSTS'])
 
@@ -184,7 +162,7 @@ class MongoDBPipeline(BaseItemExporter):
             raise SyntaxError(msg)
 
     def process_item(self, item, spider):
-        """ Process the item and add it to MongoDB
+        """Process the item and add it to MongoDB.
 
         :type item: Item object
         :param item: The item to put into MongoDB
@@ -217,7 +195,7 @@ class MongoDBPipeline(BaseItemExporter):
         return self.insert_item(item, spider)
 
     def close_spider(self, spider):
-        """ Method called when the spider is closed
+        """Be called when the spider is closed.
 
         :type spider: BaseSpider object
         :param spider: The spider running the queries
@@ -227,7 +205,7 @@ class MongoDBPipeline(BaseItemExporter):
             self.insert_item(self.item_buffer, spider)
 
     def insert_item(self, item, spider):
-        """ Process the item and add it to MongoDB
+        """Process the item and add it to MongoDB.
 
         :type item: (Item object) or [(Item object)]
         :param item: The item(s) to put into MongoDB
@@ -274,7 +252,6 @@ class MongoDBPipeline(BaseItemExporter):
                 self.config['database'], collection_name))
 
         return item
-
 
     def get_collection(self, name):
         if self.config['separate_collections']:
