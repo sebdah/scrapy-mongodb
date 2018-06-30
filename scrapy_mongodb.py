@@ -219,7 +219,7 @@ class MongoDBPipeline(BaseItemExporter):
             if self.config['append_timestamp']:
                 item['scrapy-mongodb'] = {'ts': datetime.datetime.utcnow()}
 
-        collection_name, collection = self.get_collection(spider.name)
+        collection_name, collection = self.get_collection(spider.name, item)
 
         if self.config['unique_key'] is None:
             try:
@@ -253,7 +253,7 @@ class MongoDBPipeline(BaseItemExporter):
 
         return item
 
-    def get_collection(self, name):
+    def get_collection(self, name, item):
         if self.config['separate_collections']:
             collection = self.collections.get(name)
             collection_name = name
