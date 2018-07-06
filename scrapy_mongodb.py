@@ -32,7 +32,7 @@ class MongoDBPipeline(BaseItemExporter):
         'write_concern': 0,
         'database': 'scrapy-mongodb',
         'collection': 'items',
-        'item_collection': 'collection',
+        'item_collection': None,
         'separate_collections': False,
         'replica_set': None,
         'unique_key': None,
