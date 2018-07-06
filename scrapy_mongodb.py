@@ -1,6 +1,6 @@
 import datetime
 import logging
-
+import ssl
 import six
 from pymongo import errors
 from pymongo.mongo_client import MongoClient
@@ -38,6 +38,7 @@ class MongoDBPipeline(BaseItemExporter):
         'buffer': None,
         'append_timestamp': False,
         'stop_on_duplicate': 0,
+        'verify_ssl': None
     }
 
     # Item buffer
@@ -78,7 +79,8 @@ class MongoDBPipeline(BaseItemExporter):
             connection = MongoClient(
                 self.config['uri'],
                 fsync=self.config['fsync'],
-                read_preference=ReadPreference.PRIMARY)
+                read_preference=ReadPreference.PRIMARY,
+                ssl_cert_reqs=self.config['verify_ssl'])
 
         # Set up the database
         self.database = connection[self.config['database']]
@@ -145,7 +147,8 @@ class MongoDBPipeline(BaseItemExporter):
             ('unique_key', 'MONGODB_UNIQUE_KEY'),
             ('buffer', 'MONGODB_BUFFER_DATA'),
             ('append_timestamp', 'MONGODB_ADD_TIMESTAMP'),
-            ('stop_on_duplicate', 'MONGODB_STOP_ON_DUPLICATE')
+            ('stop_on_duplicate', 'MONGODB_STOP_ON_DUPLICATE'),
+            ('verify_ssl', 'MONGODB_VERIFY_SSL')
         ]
 
         for key, setting in options:
