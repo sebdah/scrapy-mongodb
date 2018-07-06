@@ -32,6 +32,7 @@ class MongoDBPipeline(BaseItemExporter):
         'write_concern': 0,
         'database': 'scrapy-mongodb',
         'collection': 'items',
+        'item_collection': 'collection',
         'separate_collections': False,
         'replica_set': None,
         'unique_key': None,
@@ -82,7 +83,7 @@ class MongoDBPipeline(BaseItemExporter):
 
         # Set up the database
         self.database = connection[self.config['database']]
-        self.collections = {'default': self.database[self.config['collection']]}
+        self.collections = {}
 
         self.logger.info(u'Connected to MongoDB {0}, using "{1}"'.format(
             self.config['uri'],
@@ -140,6 +141,7 @@ class MongoDBPipeline(BaseItemExporter):
             ('write_concern', 'MONGODB_REPLICA_SET_W'),
             ('database', 'MONGODB_DATABASE'),
             ('collection', 'MONGODB_COLLECTION'),
+            ('item_collection', 'MONGODB_ITEM_COLLECTION'),
             ('separate_collections', 'MONGODB_SEPARATE_COLLECTIONS'),
             ('replica_set', 'MONGODB_REPLICA_SET'),
             ('unique_key', 'MONGODB_UNIQUE_KEY'),
@@ -254,16 +256,19 @@ class MongoDBPipeline(BaseItemExporter):
         return item
 
     def get_collection(self, name, item):
-        if self.config['separate_collections']:
-            collection = self.collections.get(name)
+
+        collection_name = self.config['collection']
+
+        if self.config['item_collection'] and self.config['item_collection'] in item:
+            collection_name = item[self.config['item_collection']]
+        elif self.config['separate_collections']:
             collection_name = name
 
-            if not collection:
-                collection = self.database[name]
-                self.collections[name] = collection
-        else:
-            collection = self.collections.get('default')
-            collection_name = self.config['collection']
+        collection = self.collections.get(collection_name)
+
+        if not collection:
+            collection = self.database[collection_name]
+            self.collections[collection_name] = collection
 
         # Ensure unique index
         if self.config['unique_key']:

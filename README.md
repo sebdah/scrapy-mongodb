@@ -86,6 +86,7 @@ MONGODB_SEPARATE_COLLECTIONS = True
 | --- | --- | --- | --- |
 | `MONGODB_DATABASE` | scrapy-mongodb | No | Database to use. Does not need to exist. |
 | `MONGODB_COLLECTION` | items | No | Collection within the database to use. Does not need to exist. |
+| `MONGODB_ITEM_COLLECTION` | collection | No | Collection name to use if an item has this key. Does not need to exist. |
 | `MONGODB_URI` | mongodb://localhost:27017 | No | URI to the MongoDB instance or replica sets you want to connect to. It must start with `mongodb://` (see more in the [MongoDB docs][1]). E.g.: `mongodb://user:pass@host:port`, `mongodb://user:pass@host:port,host2:port2` |
 | `MONGODB_UNIQUE_KEY` | None | No | If you want to have a unique key in the database, enter the key name here. `scrapy-mongodb` will ensure the key is properly indexed. |
 | `MONGODB_BUFFER_DATA` | None | No | To ease the load on MongoDB, set this option to the number of items you want to buffer in the client before sending them to database. Setting a `MONGODB_UNIQUE_KEY` together with `MONGODB_BUFFER_DATA` is not supported. |
